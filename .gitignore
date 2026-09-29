@@ -31,3 +31,6 @@ findings.json
 .idea/
 .vscode/
 *.swp
+
+# Internal launch-ops copy (keep private — not for the public repo)
+LAUNCH.md
