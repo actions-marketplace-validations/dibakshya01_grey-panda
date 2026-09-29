@@ -92,13 +92,32 @@ _DANGEROUS_SQL = re.compile(
     r"\b(?:DROP|DELETE|TRUNCATE|UPDATE|INSERT|ALTER|GRANT)\b\s", re.IGNORECASE
 )
 
-# Common XSS constructs in model output. These are neutralised (not a full HTML
-# sanitiser — see the OutputGuardrail docstring).
+# Best-effort XSS-construct detection for the OPT-IN regex mode. Regex is not a
+# real HTML sanitiser and cannot be complete — the safe default is escaping.
+# These patterns exist to (a) neutralise obvious constructs in the opt-in mode and
+# (b) report when active markup was present. Vectors are drawn from the OWASP XSS
+# filter-evasion cheat sheet (svg/onload, body/onload, slash-separated handlers,
+# CSS expression(), unquoted attrs, etc.).
 _SCRIPT_BLOCK = re.compile(r"<\s*script\b[^>]*>.*?<\s*/\s*script\s*>", re.IGNORECASE | re.DOTALL)
 _BARE_SCRIPT = re.compile(r"<\s*/?\s*script\b[^>]*>", re.IGNORECASE)
-_EVENT_ATTR = re.compile(r"\son[a-z]+\s*=\s*(?:\"[^\"]*\"|'[^']*'|[^\s>]+)", re.IGNORECASE)
-_JS_URI = re.compile(r"(?:javascript|vbscript|data)\s*:(?=[^\s\"']*(?:script|alert|onerror|base64|text/html))", re.IGNORECASE)
-_EMBED_TAG = re.compile(r"<\s*(?:iframe|object|embed|form|base|meta|link)\b[^>]*>", re.IGNORECASE)
+# Event handlers: whitespace OR '/' separator (e.g. <svg/onload=...>), any value form.
+_EVENT_ATTR = re.compile(r"[\s/]on[a-z]+\s*=\s*(?:\"[^\"]*\"|'[^']*'|[^\s>]+)", re.IGNORECASE)
+# javascript:/vbscript: anywhere; data: URLs that carry html/script/base64.
+_JS_URI = re.compile(
+    r"(?:javascript|vbscript)\s*:|data\s*:\s*[^,\s\"']*(?:html|script|base64)", re.IGNORECASE
+)
+_CSS_EXPR = re.compile(r"expression\s*\(|url\s*\(\s*['\"]?\s*(?:javascript|vbscript):", re.IGNORECASE)
+_EMBED_TAG = re.compile(
+    r"<\s*(?:iframe|object|embed|form|base|meta|link|svg|math|marquee|template|applet)\b[^>]*>",
+    re.IGNORECASE,
+)
+# Any tag that carries a dangerous construct — used to decide the opt-in mode must
+# fail closed (escape) rather than pass.
+_ANY_XSS = (_SCRIPT_BLOCK, _BARE_SCRIPT, _EVENT_ATTR, _JS_URI, _CSS_EXPR, _EMBED_TAG)
+
+
+def _has_xss(text: str) -> bool:
+    return any(rx.search(text) for rx in _ANY_XSS)
 
 
 @dataclass
@@ -221,40 +240,35 @@ class OutputGuardrail:
     Addresses LLM10:2026 (Improper Output Handling) and LLM02:2026 (silent data
     theft through image/link URLs to attacker-controlled domains).
 
-    What it does, precisely (so you can trust the boundary):
+    **Safe by default.** ``escape_html`` defaults to ``True``: ``sanitize()``
+    returns ``html.escape``-d text, which is XSS-safe to render as HTML. This is
+    deliberately conservative — the returned text is literal (model Markdown/HTML
+    shows as text). It is the correct default for *untrusted* model output.
 
-    * **Rewrites external-image exfil URLs** (markdown + HTML ``<img>``) to domains
-      outside ``allowed_url_domains``.
-    * **Neutralises the most common XSS constructs** when ``block_dangerous_html``
-      is on (default): ``<script>`` blocks, inline event handlers (``onerror=`` …),
-      ``javascript:``/``vbscript:``/``data:text/html`` URIs, and it flags embedding
-      tags (``<iframe>``/``<object>``/``<embed>``). Each is reported as a violation.
-    * Optionally flags destructive SQL verbs (``block_sql_in_output``).
-
-    What it is **NOT**: a complete HTML sanitiser. It reduces risk (defense in
-    depth) but does not guarantee XSS-safe HTML. **If you render untrusted model
-    output as HTML, set ``escape_html=True``** (returns ``html.escape``-d text,
-    which is safe to display as text), or rely on your framework's autoescaping or
-    a vetted sanitiser (e.g. ``bleach``, DOMPurify). See WHAT_IT_CAN_AND_CANNOT_DO.md.
+    **Opt-in best-effort mode** (``escape_html=False``) instead rewrites external
+    image URLs and neutralises the common XSS constructs with regex. Regex is NOT a
+    real HTML sanitiser and cannot be complete, so this mode **fails closed**: if it
+    detects any dangerous construct it cannot prove safe, it escapes the whole
+    output rather than return partially-stripped markup. Even so, ``passed=True``
+    in this mode means "no *known* dangerous construct was seen" — not a guarantee.
+    For rich HTML with allow-listed markup, use a vetted sanitiser (``bleach`` /
+    DOMPurify). See WHAT_IT_CAN_AND_CANNOT_DO.md.
 
     Args:
-        block_external_images: Rewrite external image URLs. Default ``True``.
-        block_dangerous_html: Neutralise script/event-handler/js-URI XSS
-            constructs and flag embed tags. Default ``True``.
-        escape_html: If ``True``, HTML-escape the entire output (the safe choice
-            when the output will be rendered as HTML). Overrides the other
-            neutralisation (there is nothing left to neutralise once escaped).
-            Default ``False``.
+        escape_html: HTML-escape the entire output (safe). Default ``True``.
+        block_external_images: In best-effort mode, rewrite external image URLs.
+        block_dangerous_html: In best-effort mode, detect/neutralise XSS constructs
+            and fail closed (escape) on detection. Default ``True``.
         block_sql_in_output: Flag destructive SQL verbs. Default ``False``.
-        allowed_url_domains: Domains considered safe for image URLs. ``None`` means
-            no external domain is allowed (all external images are rewritten).
+        allowed_url_domains: Domains considered safe for image URLs (best-effort
+            mode). ``None`` means all external images are rewritten.
     """
 
     def __init__(
         self,
+        escape_html: bool = True,
         block_external_images: bool = True,
         block_dangerous_html: bool = True,
-        escape_html: bool = False,
         block_sql_in_output: bool = False,
         allowed_url_domains: list[str] | None = None,
     ) -> None:
@@ -278,10 +292,10 @@ class OutputGuardrail:
         violations: list[str] = []
         text = output
 
-        # Safest mode: escape everything. Nothing renders as active HTML.
+        # Safe default: escape everything. Nothing renders as active HTML.
         if self.escape_html:
             escaped = _html.escape(output)
-            if _SCRIPT_BLOCK.search(output) or _EVENT_ATTR.search(output) or _JS_URI.search(output):
+            if _has_xss(output):
                 violations.append("HTML-escaped output containing active markup (XSS constructs)")
             return GuardrailResult(passed=True, violations=violations, sanitized_text=escaped)
 
@@ -303,20 +317,12 @@ class OutputGuardrail:
             text = _MD_IMAGE.sub(_repl_md, text)
             text = _HTML_IMAGE.sub(_repl_html, text)
 
-        if self.block_dangerous_html:
-            if _SCRIPT_BLOCK.search(text) or _BARE_SCRIPT.search(text):
-                violations.append("neutralised <script> in model output")
-                text = _SCRIPT_BLOCK.sub("[script removed by Grey Panda]", text)
-                text = _BARE_SCRIPT.sub("[script removed by Grey Panda]", text)
-            if _EVENT_ATTR.search(text):
-                violations.append("stripped inline event handler(s) (on*=) in model output")
-                text = _EVENT_ATTR.sub("", text)
-            if _JS_URI.search(text):
-                violations.append("neutralised javascript:/data: URI in model output")
-                text = _JS_URI.sub("blocked:", text)
-            if _EMBED_TAG.search(text):
-                violations.append("embedding tag (iframe/object/embed/…) present in model output")
-                text = _EMBED_TAG.sub("[embed removed by Grey Panda]", text)
+        # Best-effort mode: regex cannot be a complete sanitiser, so FAIL CLOSED —
+        # if any dangerous construct is detected, escape the whole output rather
+        # than return partially-stripped (still-exploitable) markup.
+        if self.block_dangerous_html and _has_xss(text):
+            violations.append("dangerous HTML detected — output escaped (fail-closed)")
+            text = _html.escape(text)
 
         if self.block_sql_in_output and _DANGEROUS_SQL.search(text):
             violations.append("destructive SQL verb present in model output")

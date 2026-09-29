@@ -64,7 +64,10 @@ class SecureContextBuilder:
             exceed it are truncated (never silently dropped).
         user_id / session_id: Recorded in the audit snapshot for traceability.
         tag_untrusted: When ``True`` (default) retrieved and external content is
-            wrapped with explicit "treat as data" fences.
+            wrapped with explicit "treat as data" fences using a per-builder random
+            nonce. Caveat: the nonce is shared across this builder's segments — if
+            fenced content is ever echoed back verbatim, the nonce leaks; use a
+            fresh builder per request.
 
     Note on token counting: this uses the well-known ``len(text) // 4`` heuristic.
     It is an approximation, documented as such — pair it with your provider's real
@@ -140,6 +143,13 @@ class SecureContextBuilder:
                     break
                 cutoff = remaining * 4
                 truncated = seg.content[:cutoff] + "\n[... truncated for context limit ...]"
+                # If truncation cut a fenced segment's closing marker, re-append it
+                # so untrusted content is never left in an unterminated fence.
+                if self._nonce in seg.content:
+                    kind = "EXTERNAL" if "EXTERNAL CONTENT" in seg.content else "RETRIEVED"
+                    end = f"[END {kind} CONTENT {self._nonce}]"
+                    if end not in truncated:
+                        truncated += "\n" + end
                 messages.append({"role": seg.role, "content": truncated})
                 used = self.max_tokens
                 break

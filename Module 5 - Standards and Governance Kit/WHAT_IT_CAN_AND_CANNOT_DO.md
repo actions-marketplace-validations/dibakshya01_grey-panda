@@ -61,7 +61,7 @@ Security tools earn trust by being honest about their limits. This document list
 - **Cannot detect novel / zero-day injection techniques.** New encodings and phrasings pass regex.
 
 ### SDK limitations
-- **`OutputGuardrail` is NOT a complete HTML sanitiser.** It neutralises and flags the common XSS constructs (`<script>`, inline `on*=` event handlers, `javascript:`/`data:` URIs, and embed tags) plus external-image exfil URLs — but crafted markup can still get past it. **If you render untrusted model output as HTML, set `escape_html=True`** (returns `html.escape`-d text) or use a vetted sanitiser (bleach / DOMPurify). Do not rely on the default mode as XSS-safe HTML.
+- **`OutputGuardrail` is safe by default, but is not a full HTML *sanitiser*.** The default (`escape_html=True`) HTML-escapes the output, which is XSS-safe to render — but it renders model Markdown/HTML as literal text (lossy). The opt-in best-effort regex mode (`escape_html=False`) rewrites external-image URLs and neutralises common XSS constructs and **fails closed** (escapes) on detection, but regex cannot be complete — `passed=True` there means "no *known* dangerous construct seen," not a guarantee. For rich HTML with allow-listed markup, use a vetted sanitiser (bleach / DOMPurify).
 - **Trust-tagging fences are defence-in-depth, not a hard boundary.** `SecureContextBuilder` uses a per-call nonce delimiter, strips breakout tokens, and places untrusted content under the `user` role (never `system`) — but a capable model can still be talked past a single-prompt boundary.
 - **`PromptGuardrail` cannot detect semantically-equivalent injections** (paraphrasing bypasses).
 - **DLP regex is language- and format-specific** — cross-lingual or unusually-formatted PII can slip through.
@@ -75,7 +75,8 @@ Security tools earn trust by being honest about their limits. This document list
 - **Python-centric** — JavaScript/TypeScript, Java, Go, and others are covered only partially (secrets, HTTP, output-rendering patterns) or not at all.
 - **False positives** on benign code that matches trigger keywords.
 - **False negatives** on obfuscated or dynamically-constructed patterns (split strings, `getattr`, string building).
-- **Only lightweight taint tracking** — a small within-file pass follows model-tainted variables into the highest-impact sinks (SQL/exec and HTML), but it is not full data-flow analysis and does not follow data across function calls.
+- **Only lightweight taint tracking** — a function-scoped (`ast`-based), Python-only pass follows model-tainted variables into the highest-impact Python sinks (SQL/exec and server-side HTML like `mark_safe`). It is not full data-flow analysis: it does not cross function boundaries, and it does not run on JS/TS (a renamed model→`dangerouslySetInnerHTML` in `.tsx` is not caught by taint).
+- **`GP-AI-003` ("no DLP before an LLM call") is a proximity heuristic** — it suppresses when a `redact()`/`scan()` appears within a few lines, which models "did you DLP nearby," not true dataflow. Treat it as a reminder, not a proof.
 
 ### MCP / ACS limitations
 - **Tool-poisoning marker detection is heuristic** — it catches known-bad phrasing, not cleverly disguised instructions.

@@ -24,7 +24,7 @@ guard, dlp, out = PromptGuardrail(), DLPScanner(), OutputGuardrail()
 safe   = guard.assert_safe(user_input)        # block injection, strip invisible Unicode
 clean  = dlp.redact(safe)                       # redact PII & secrets
 reply  = call_your_llm(clean)                   # your existing call — unchanged
-answer = out.sanitize(reply).sanitized_text     # neutralise XSS + exfil URLs (escape_html=True for full safety)
+answer = out.sanitize(reply).sanitized_text     # XSS-safe by default (HTML-escapes model output)
 ```
 
 ### 4. Wire it into your IDE (MCP)

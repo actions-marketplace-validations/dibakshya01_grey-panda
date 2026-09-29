@@ -30,7 +30,7 @@ The mapping tables in Module 5 are generated from it (`tools/generate_mappings.p
 3. SecureContextBuilder            # tag trust per segment, enforce size budget
 4. (your LLM call)                 # through your gateway — unchanged
 5. DLPScanner.redact()             # scan the response for leaked PII
-6. OutputGuardrail.sanitize()      # neutralise XSS + exfil image URLs (escape_html=True for full safety)
+6. OutputGuardrail.sanitize()      # escape output → XSS-safe by default
 7. AuditLogger                     # structured event, zero raw text, SIEM-ready
 ```
 For agents, `AgentSecurityWrapper` adds init-time Rule-of-Two enforcement, a

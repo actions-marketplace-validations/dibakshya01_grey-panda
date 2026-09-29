@@ -10,6 +10,7 @@ dynamically constructed patterns, and it does not follow data across functions.
 
 from __future__ import annotations
 
+import ast
 import fnmatch
 import os
 import re
@@ -35,30 +36,61 @@ _SKIP_DIRS = {
 _MAX_FILE_BYTES = 2_000_000  # skip very large / likely-binary files
 
 # --------------------------------------------------------------------------- #
-# Lightweight model-output taint tracking (Python only).
+# Lightweight, FUNCTION-SCOPED model-output taint tracking (Python only, via ast).
 #
-# The keyword-based rules miss a model-fed sink when the variable isn't named
-# with a trigger word (e.g. `query`/`html`). This small pass follows variables
-# assigned from a model call across a file and flags the highest-impact sinks
-# (SQL/exec and HTML) when they consume a tainted variable — a pragmatic, stdlib
-# approximation of taint analysis, not a full data-flow engine.
+# The keyword-based rules miss a model-fed sink when the variable isn't named with
+# a trigger word (e.g. `query`/`html`). This pass parses the file and, WITHIN EACH
+# FUNCTION SCOPE, follows variables assigned from a model call into the highest-
+# impact Python sinks (SQL/exec and server-side HTML) — a pragmatic, stdlib
+# approximation of taint analysis, not a full data-flow engine. Scoping per
+# function avoids cross-function false positives from same-named variables.
 # --------------------------------------------------------------------------- #
-_TAINT_CALL = re.compile(
-    r"(?i)(?:\.(?:chat\b|completions\b|create\b|invoke\b|generate\b|generate_content\b|predict\b|complete\b)"
-    r"|\bask_(?:model|llm|ai|gpt)\b|\bcall_(?:model|llm|ai|gateway)\b|\bllm\.(?:invoke|generate|predict|complete)"
-    r"|\.choices\[0\]\.message\.content|\.choices\[0\]\.text)"
-)
-_TAINT_ASSIGN = re.compile(r"^\s*([A-Za-z_]\w*)\s*=\s*(.+?)\s*$")
-_TAINT_SINKS = [
-    ("GP-AI-014", re.compile(
-        r"(?i)(?:cursor\.execute|\bdb\.execute|\.executescript|\bexecute)\s*\(\s*([A-Za-z_]\w*)")),
-    ("GP-AI-014", re.compile(
-        r"(?i)(?:os\.system|subprocess\.(?:run|call|Popen|check_output)|\beval|\bexec)\s*\(\s*([A-Za-z_]\w*)")),
-    ("GP-AI-004", re.compile(
-        r"(?i)(?:mark_safe|dangerouslySetInnerHTML|Markup|\.innerHTML\s*=|render_template_string)\s*\(?\s*([A-Za-z_]\w*)")),
-]
+_MODEL_ATTRS = {
+    "chat", "completions", "create", "invoke", "generate", "generate_content",
+    "predict", "complete",
+}
+_MODEL_NAME = re.compile(r"^(?:ask_(?:model|llm|ai|gpt)|call_(?:model|llm|ai|gateway))$", re.IGNORECASE)
+# Python-only sinks. (React/JS sinks like dangerouslySetInnerHTML are intentionally
+# NOT here — this pass only runs on .py files; the keyword rules cover JS/TS.)
+_SQL_SINK_ATTRS = {"execute", "executescript", "executemany", "system"}
+_SQL_SINK_NAMES = {"eval", "exec"}
+_HTML_SINK = {"mark_safe", "Markup", "render_template_string"}
 _TAINT_SUPPRESS = re.compile(
     r"(?i)escape|sanitize|OutputGuardrail|validate|allowlist|parametri|shlex\.quote|bleach|grey-?panda:\s*ignore")
+
+
+def _expr_is_model_call(node: ast.AST) -> bool:
+    """True if an expression subtree produces model output (a call or .content access)."""
+    for n in ast.walk(node):
+        if isinstance(n, ast.Call):
+            f = n.func
+            if isinstance(f, ast.Attribute) and (f.attr in _MODEL_ATTRS or _MODEL_NAME.match(f.attr)):
+                return True
+            if isinstance(f, ast.Name) and _MODEL_NAME.match(f.id):
+                return True
+        if isinstance(n, ast.Attribute) and n.attr in ("content", "text"):
+            dumped = ast.dump(n)
+            if "choices" in dumped or "message" in dumped:
+                return True
+    return False
+
+
+def _names_in(node: ast.AST) -> set[str]:
+    return {n.id for n in ast.walk(node) if isinstance(n, ast.Name)}
+
+
+def _first_arg_name(call: ast.Call) -> str | None:
+    if call.args and isinstance(call.args[0], ast.Name):
+        return call.args[0].id
+    return None
+
+
+def _scope_bodies(module: ast.Module):
+    """Yield each independent scope body: the module top-level and every function."""
+    yield [s for s in module.body if not isinstance(s, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef))]
+    for node in ast.walk(module):
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            yield node.body
 
 
 @dataclass
@@ -176,52 +208,78 @@ class AISecurityScanner:
                 ))
 
         if path.suffix == ".py":
-            findings.extend(self._taint_findings(path, lines, findings))
+            findings.extend(self._taint_findings(path, text, lines, findings))
         return findings
 
-    def _taint_findings(self, path: Path, lines: list[str], existing: list[Finding]) -> list[Finding]:
-        """Flag SQL/exec/HTML sinks that consume a model-tainted variable."""
+    def _taint_findings(
+        self, path: Path, text: str, lines: list[str], existing: list[Finding]
+    ) -> list[Finding]:
+        """Flag Python SQL/exec/HTML sinks that consume a model-tainted variable.
+
+        Taint is scoped per function (via ``ast``), so a same-named variable in an
+        unrelated function does not cause a false positive.
+        """
         active = {r.id: r for r in self.rules}
         if not ({"GP-AI-014", "GP-AI-004"} & set(active)):
             return []
-        # Build the set of model-tainted variables (a couple of propagation hops).
-        tainted: set[str] = set()
-        for _ in range(2):
-            for line in lines:
-                m = _TAINT_ASSIGN.match(line)
-                if not m:
-                    continue
-                var, rhs = m.group(1), m.group(2)
-                if _TAINT_CALL.search(rhs) or any(re.search(rf"\b{re.escape(t)}\b", rhs) for t in tainted):
-                    tainted.add(var)
-        if not tainted:
-            return []
+        try:
+            module = ast.parse(text)
+        except (SyntaxError, ValueError):
+            return []  # not valid Python 3 source — skip taint (regex rules still ran)
+
         already = {(f.rule_id, f.line) for f in existing}
         out: list[Finding] = []
-        for idx, line in enumerate(lines):
-            if _INLINE_IGNORE.search(line):
+
+        for body in _scope_bodies(module):
+            # 1. Tainted variables in THIS scope (a couple of propagation hops).
+            tainted: set[str] = set()
+            assigns = [n for stmt in body for n in ast.walk(stmt) if isinstance(n, ast.Assign)]
+            for _ in range(2):
+                for a in assigns:
+                    targets = {t.id for t in a.targets if isinstance(t, ast.Name)}
+                    if not targets:
+                        continue
+                    if _expr_is_model_call(a.value) or (_names_in(a.value) & tainted):
+                        tainted |= targets
+            if not tainted:
                 continue
-            window = "\n".join(lines[max(0, idx - 2): idx + 3])
-            if _TAINT_SUPPRESS.search(window):
-                continue
-            for rule_id, rx in _TAINT_SINKS:
-                if rule_id not in active:
-                    continue
-                m = rx.search(line)
-                if not m or m.group(1) not in tainted:
-                    continue
-                if (rule_id, idx + 1) in already:
-                    continue
-                rule = active[rule_id]
-                snippet = line.strip()[:157]
-                out.append(Finding(
-                    rule_id=rule.id, owasp_id=rule.owasp_id, severity=rule.severity,
-                    title=rule.title,
-                    description=rule.description + " (model-tainted variable reaches this sink)",
-                    remediation=rule.remediation, file=str(path), line=idx + 1,
-                    snippet=snippet, sdk=rule.sdk,
-                ))
-                already.add((rule_id, idx + 1))
+
+            # 2. Sinks in THIS scope consuming a tainted variable.
+            for stmt in body:
+                for node in ast.walk(stmt):
+                    if not isinstance(node, ast.Call):
+                        continue
+                    f = node.func
+                    rule_id = None
+                    if isinstance(f, ast.Attribute) and f.attr in _SQL_SINK_ATTRS:
+                        rule_id = "GP-AI-014"
+                    elif isinstance(f, ast.Name) and f.id in _SQL_SINK_NAMES:
+                        rule_id = "GP-AI-014"
+                    elif isinstance(f, ast.Name) and f.id in _HTML_SINK:
+                        rule_id = "GP-AI-004"
+                    elif isinstance(f, ast.Attribute) and f.attr in _HTML_SINK:
+                        rule_id = "GP-AI-004"
+                    if rule_id is None or rule_id not in active:
+                        continue
+                    arg = _first_arg_name(node)
+                    if arg is None or arg not in tainted:
+                        continue
+                    lineno = getattr(node, "lineno", 1)
+                    if (rule_id, lineno) in already:
+                        continue
+                    line = lines[lineno - 1] if 0 < lineno <= len(lines) else ""
+                    win = "\n".join(lines[max(0, lineno - 3): lineno + 2])
+                    if _INLINE_IGNORE.search(line) or _TAINT_SUPPRESS.search(win):
+                        continue
+                    rule = active[rule_id]
+                    out.append(Finding(
+                        rule_id=rule.id, owasp_id=rule.owasp_id, severity=rule.severity,
+                        title=rule.title,
+                        description=rule.description + " (model-tainted variable reaches this sink)",
+                        remediation=rule.remediation, file=str(path), line=lineno,
+                        snippet=line.strip()[:157], sdk=rule.sdk,
+                    ))
+                    already.add((rule_id, lineno))
         return out
 
     def scan_path(self, root: Path) -> list[Finding]:
@@ -247,6 +305,11 @@ def severity_counts(findings: list[Finding]) -> dict[str, int]:
 
 
 def exceeds_threshold(findings: list[Finding], fail_on: str) -> bool:
-    """True if any finding is at ``fail_on`` severity or above."""
-    threshold = SEVERITY_ORDER.get(fail_on.upper(), 0)
+    """True if any finding is at ``fail_on`` severity or above.
+
+    Fails **closed**: an unknown ``fail_on`` maps to the most permissive threshold
+    (any finding trips the gate) so a config typo can never silently downgrade the
+    gate. Callers should also validate ``fail_on`` up front (see the CLI).
+    """
+    threshold = SEVERITY_ORDER.get(fail_on.upper(), max(SEVERITY_ORDER.values()))
     return any(SEVERITY_ORDER.get(f.severity, 9) <= threshold for f in findings)

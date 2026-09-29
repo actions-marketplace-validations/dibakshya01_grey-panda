@@ -21,7 +21,12 @@ import time
 from pathlib import Path
 
 from .._version import __version__
-from ..scanner.engine import AISecurityScanner, exceeds_threshold, severity_counts
+from ..scanner.engine import (
+    SEVERITY_ORDER,
+    AISecurityScanner,
+    exceeds_threshold,
+    severity_counts,
+)
 from ..scanner.profiles import DEFAULT_PROFILE, PROFILES, get_profile
 from ..scanner.reporters import report_json, report_markdown, report_sarif
 
@@ -63,28 +68,51 @@ def _load_config(root: Path) -> dict:
 # --------------------------------------------------------------------------- #
 # scan
 # --------------------------------------------------------------------------- #
+_SEVERITIES = {"CRITICAL", "HIGH", "MEDIUM", "LOW"}
+
+
 def cmd_scan(args: argparse.Namespace) -> int:
     config = _load_config(Path(args.path))
     profile_name = args.profile or config.get("profile") or DEFAULT_PROFILE
+    # Validate config values up front — never let a typo silently change behaviour.
+    if profile_name not in PROFILES:
+        sys.stderr.write(f"{PANDA} error: invalid profile '{profile_name}' "
+                         f"(choose from: {', '.join(PROFILES)})\n")
+        return 2
     profile = get_profile(profile_name)
     fail_on = (args.fail_on or config.get("fail_on") or profile.default_fail_on).upper()
+    if fail_on not in _SEVERITIES:
+        sys.stderr.write(f"{PANDA} error: invalid fail_on '{fail_on}' "
+                         f"(choose from: {', '.join(sorted(_SEVERITIES))})\n")
+        return 2
     scanner = AISecurityScanner(profile=profile_name)
 
+    # A path on the command line wins; otherwise honour config `paths`.
+    targets = [args.path]
+    if args.path == "." and config.get("paths"):
+        p = config["paths"]
+        targets = p if isinstance(p, list) and p else [str(p)]
+
     start = time.time()
-    findings = scanner.scan_path(Path(args.path))
+    findings: list = []
+    for t in targets:
+        findings.extend(scanner.scan_path(Path(t)))
+    if len(targets) > 1:
+        findings.sort(key=lambda f: (SEVERITY_ORDER.get(f.severity, 9), f.file, f.line))
     elapsed = time.time() - start
+    display_path = ", ".join(targets)
 
     if args.format == "json":
-        out = report_json(findings, args.path, elapsed, profile_name)
+        out = report_json(findings, display_path, elapsed, profile_name)
     elif args.format == "sarif":
-        out = report_sarif(findings, args.path, elapsed, profile_name)
+        out = report_sarif(findings, display_path, elapsed, profile_name)
     else:
-        out = report_markdown(findings, args.path, elapsed, profile_name)
+        out = report_markdown(findings, display_path, elapsed, profile_name)
 
     if args.output:
         Path(args.output).write_text(out, encoding="utf-8")
         counts = severity_counts(findings)
-        _print(f"{PANDA} Grey Panda scanned '{args.path}' [{profile_name}] in {elapsed:.2f}s")
+        _print(f"{PANDA} Grey Panda scanned '{display_path}' [{profile_name}] in {elapsed:.2f}s")
         _print(f"   {counts['CRITICAL']} critical · {counts['HIGH']} high · "
                f"{counts['MEDIUM']} medium · {counts['LOW']} low → {args.output}")
     else:

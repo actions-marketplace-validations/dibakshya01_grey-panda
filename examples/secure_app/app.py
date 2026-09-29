@@ -27,7 +27,7 @@ GATEWAY_URL = os.environ.get("AI_GATEWAY_URL", "https://ai-gateway.internal.exam
 
 _guard = PromptGuardrail()
 _dlp = DLPScanner()
-_out = OutputGuardrail(allowed_url_domains=["internal.example"])
+_out = OutputGuardrail()  # safe by default: HTML-escapes model output before render
 _audit = AuditLogger(agent_id="support-bot", session_id="demo")
 
 

