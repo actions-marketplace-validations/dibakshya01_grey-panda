@@ -73,7 +73,7 @@ _BASELINE_PATTERNS: tuple[str, ...] = (
     r"\[/?\s*system\s*\]",
     r"<\s*/?\s*system\s*>",
     r"###\s*system",
-    r"<!--.*?(?:instruction|system|ignore).*?-->",
+    r"<!--[^>]{0,200}(?:instruction|system|ignore)",  # linear: bounded, no nested .*?
     # instruction to reveal the system prompt / hidden context (LLM08)
     r"(?:reveal|print|repeat|show|output)\s+(?:your\s+)?(?:system\s+prompt|initial\s+instructions|hidden\s+(?:context|prompt))",  # grey-panda: ignore (signature pattern, not a real log call)
     r"what\s+(?:were|are)\s+your\s+(?:original\s+)?instructions",
@@ -202,15 +202,18 @@ class PromptGuardrail:
                 "dangerous bidi/tag Unicode removed (Trojan Source / ASCII smuggling)"
             )
 
-        # 2. Length / unbounded-consumption guard.
+        # 2. Length / unbounded-consumption guard. Bound the text we run regexes
+        #    over BEFORE matching — never hand an unbounded attacker string to the
+        #    pattern engine (this control must not become a DoS sink itself).
         if len(cleaned) > self.max_chars:
             violations.append(
                 f"input exceeds max length ({len(cleaned)} > {self.max_chars} chars)"
             )
+        to_match = cleaned[: self.max_chars]
 
-        # 3. Known injection patterns.
+        # 3. Known injection patterns (all linear-time; see _BASELINE_PATTERNS).
         for pat in self._patterns:
-            if pat.search(cleaned):
+            if pat.search(to_match):
                 violations.append(f"matched injection pattern: /{pat.pattern}/")
 
         passed = not violations

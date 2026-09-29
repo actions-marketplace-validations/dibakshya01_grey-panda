@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "grey-panda"
-version = "1.0.4"
+version = "1.0.5"
 description = "The calm guardian for AI, agent, and MCP code — a zero-dependency, standards-anchored AI security toolkit for developers and security reviewers."
 readme = "README.md"
 requires-python = ">=3.9"
@@ -62,15 +62,15 @@ packages = ["src/greypanda"]
 
 [tool.hatch.build.targets.sdist]
 # docs/assets media is served from raw.githubusercontent.com (keeps the sdist
-# lean). examples/ ship intentional fake secrets + pickle/shell demos that would
-# trip consumers' secret scanners on `pip download`, so they are repo-only.
-exclude = ["/docs/assets", "/examples"]
+# lean). examples/ and tests/ carry intentional fake secrets + pickle/shell/XSS
+# fixtures that would trip consumers' secret scanners on `pip download`, so they
+# are repo-only (run tests from a git checkout, not the sdist).
+exclude = ["/docs/assets", "/examples", "/tests"]
 include = [
     "/src",
     "/docs",
     "/standards",
     "/skill",
-    "/tests",
     "/tools",
     "/Module 1 - Developer Kit",
     "/Module 2 - Security Reviewer Kit",

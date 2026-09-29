@@ -4,6 +4,42 @@ All notable changes to Grey Panda are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.5] — 2026-09-30
+
+Round-3 hardening, driven by a third adversarial review — plus honest-labeling
+polish and a positive framing of the tool's determinism.
+
+### Fixed
+- **Catastrophic ReDoS in `PromptGuardrail` is closed.** The baseline HTML-comment
+  injection pattern used nested `.*?` quantifiers (`<!--.*?(?:instruction|system|
+  ignore).*?-->`); a crafted ~30 KB input drove the regex engine into pathological
+  backtracking (>20 s hang — a trivial denial-of-service against the guardrail
+  itself). It is now a bounded, linear pattern (`<!--[^>]{0,200}(?:instruction|
+  system|ignore)`), and `check()` never hands an unbounded attacker string to the
+  pattern engine (`to_match = cleaned[:max_chars]`). The same 30 KB input now
+  completes in ~0.04 s and real injections are still detected. A
+  `TestGuardrailReDoS` regression test asserts sub-second completion so this cannot
+  silently return.
+
+### Changed
+- **Honest labeling.** `gp verify` no longer prints "pass" for a scanner-clean
+  control — a clean scan means "no violation *detected*," not "control present," so
+  those now read **"checked"** (☑️, "no violation detected") with an explicit callout
+  that checked ≠ implemented. The Can/Cannot-Do doc softens "known phrasings: High"
+  to "exact known phrasings; close paraphrases slip," and reframes the Rule-of-Two
+  wrapper as enforcing "the constraint you declare." The `Guardian` default
+  disposition docstring now warns it is fail-OPEN and recommends
+  `default=Disposition.DENY`.
+- **Determinism, framed as the strength it is.** README, the website (hero, docs,
+  and architecture pages), `ARCHITECTURE.md`, and the Can/Cannot-Do doc now state
+  plainly that the core makes **no LLM calls** on purpose: reproducible verdicts (a
+  gate that never flakes), fully offline (source never leaves the machine), free,
+  fast, and auditable. Semantic AI review is positioned as an explicit opt-in via
+  the MCP server, never baked into the deterministic gate.
+- The scanner caps per-line length (`_MAX_LINE_LEN = 5_000`) before applying rule
+  patterns, as defense-in-depth against pathological single-line inputs, and the
+  sdist no longer ships `/tests`.
+
 ## [1.0.4] — 2026-09-30
 
 ### Changed

@@ -39,7 +39,7 @@ class VerificationReport:
     scan_path: str
     timestamp: str
     total: int
-    passed: int
+    checked: int  # scanner ran and found no violation ("checked" ≠ "control present")
     failed: int
     attest: int
     chapters: dict[str, list[RequirementResult]] = field(default_factory=dict)
@@ -60,7 +60,7 @@ def verify_aisvs(path: str | Path, level: int = 1, profile: str = "enterprise") 
         findings_by_rule.setdefault(f.rule_id, []).append(f)
 
     chapters: dict[str, list[RequirementResult]] = {}
-    passed = failed = attest = 0
+    checked = failed = attest = 0
 
     for chapter in aisvs["controls"]:
         ch_key = f"{chapter['id']} {chapter['title']}"
@@ -80,15 +80,15 @@ def verify_aisvs(path: str | Path, level: int = 1, profile: str = "enterprise") 
                         for f in findings_by_rule.get(r, [])[:5]:
                             evidence.append(f"{r} @ {f.file}:{f.line}")
                 else:
-                    status = "pass"
+                    status = "checked"  # no violation detected — NOT proof the control exists
             elif verify == "sdk":
                 status = "attest"
                 evidence.append("enforce via: " + ", ".join(req.get("grey_panda_controls", chapter.get("grey_panda_controls", []))))
             else:
                 status = "attest"
 
-            if status == "pass":
-                passed += 1
+            if status == "checked":
+                checked += 1
             elif status == "fail":
                 failed += 1
             else:
@@ -100,17 +100,18 @@ def verify_aisvs(path: str | Path, level: int = 1, profile: str = "enterprise") 
         if results:
             chapters[ch_key] = results
 
-    total = passed + failed + attest
+    total = checked + failed + attest
     return VerificationReport(
         level=level,
         scan_path=str(path),
         timestamp=time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-        total=total, passed=passed, failed=failed, attest=attest,
+        total=total, checked=checked, failed=failed, attest=attest,
         chapters=chapters,
     )
 
 
-_STATUS_EMOJI = {"pass": "✅", "fail": "❌", "attest": "📝", "n/a": "➖"}
+_STATUS_EMOJI = {"checked": "☑️", "fail": "❌", "attest": "📝", "n/a": "➖"}
+_STATUS_WORD = {"checked": "no violation detected", "fail": "fail", "attest": "attest", "n/a": "n/a"}
 
 
 def report_markdown(report: VerificationReport) -> str:
@@ -122,11 +123,14 @@ def report_markdown(report: VerificationReport) -> str:
         f"**Grey Panda:** v{__version__}"
     )
     lines.append("")
-    lines.append(f"**Summary:** ✅ {report.passed} passed  ·  ❌ {report.failed} failed  ·  "
+    lines.append(f"**Summary:** ☑️ {report.checked} checked (no violation)  ·  ❌ {report.failed} failed  ·  "
                  f"📝 {report.attest} to attest  ·  {report.total} total")
     lines.append("")
-    verdict = "❌ NOT VERIFIED" if report.failed else "🟢 No automated failures — complete attestations to certify"
+    verdict = "❌ NOT VERIFIED" if report.failed else "🟢 No automated violations — complete attestations to certify"
     lines.append(f"**Verdict:** {verdict}")
+    lines.append("")
+    lines.append("> ☑️ **checked** = the scanner ran and found no violation. That is *not* proof "
+                 "the control is present — only that no known bad pattern was detected.")
     lines.append("")
     for ch, results in report.chapters.items():
         lines.append(f"## {ch}")
@@ -134,7 +138,7 @@ def report_markdown(report: VerificationReport) -> str:
         lines.append("| Req | L | Status | Requirement |")
         lines.append("| --- | --- | --- | --- |")
         for r in results:
-            lines.append(f"| `{r.id}` | {r.level} | {_STATUS_EMOJI[r.status]} {r.status} | {r.text} |")
+            lines.append(f"| `{r.id}` | {r.level} | {_STATUS_EMOJI[r.status]} {_STATUS_WORD[r.status]} | {r.text} |")
         lines.append("")
         for r in results:
             if r.evidence:

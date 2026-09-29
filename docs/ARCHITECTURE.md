@@ -93,3 +93,21 @@ security logic stays in a single, tested, importable place — no duplication, n
 The shipped package imports only the Python standard library. Nothing to install,
 nothing to break, nothing new in your supply chain. Dev tools (pytest/mypy/ruff)
 are optional extras.
+
+## Deterministic by design — no LLM in the loop
+The core engine makes **no model calls**. It is pure deterministic code (regex +
+Python's `ast` module), and that is a feature, not a limitation:
+
+- **Reproducible.** Same code in, same verdict out — every run, forever. A CI gate
+  that flakes is a CI gate teams learn to ignore; Grey Panda's never does.
+- **Private & offline.** Your source never leaves the machine. There is no data
+  egress — which would be a strange thing for a *security* scanner to have.
+- **Free & fast.** No per-scan API bill, no rate limits, no network round-trip.
+- **Auditable.** Every finding maps to a rule you can read, cite (OWASP ID), and
+  reason about. There is no opaque model judgement to second-guess.
+
+Semantic, LLM-powered review is genuinely useful — for catching paraphrased
+injection and intent — but it belongs in the AI IDE you already use (Grey Panda
+ships **as an MCP server** those assistants can call) or in a later, explicit
+**opt-in** layer. It is deliberately never baked into the deterministic gate, so
+the thing that blocks your build stays boring, predictable, and trustworthy.

@@ -217,7 +217,7 @@ def cmd_verify(args: argparse.Namespace) -> int:
         from dataclasses import asdict
         out = json.dumps({
             "level": report.level, "scan_path": report.scan_path, "timestamp": report.timestamp,
-            "total": report.total, "passed": report.passed, "failed": report.failed,
+            "total": report.total, "checked": report.checked, "failed": report.failed,
             "attest": report.attest,
             "chapters": {k: [asdict(r) for r in v] for k, v in report.chapters.items()},
         }, indent=2)
@@ -227,7 +227,7 @@ def cmd_verify(args: argparse.Namespace) -> int:
     if args.output:
         Path(args.output).write_text(out, encoding="utf-8")
         _print(f"{PANDA} AISVS L{args.level} verification → {args.output} "
-               f"(✅ {report.passed} / ❌ {report.failed} / 📝 {report.attest})")
+               f"(☑️ {report.checked} checked / ❌ {report.failed} failed / 📝 {report.attest} attest)")
     else:
         _print(out)
     return 1 if report.failed else 0

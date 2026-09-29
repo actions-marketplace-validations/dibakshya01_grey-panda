@@ -34,6 +34,7 @@ _SKIP_DIRS = {
 }
 
 _MAX_FILE_BYTES = 2_000_000  # skip very large / likely-binary files
+_MAX_LINE_LEN = 5_000        # cap per-line length fed to regexes (ReDoS defence)
 
 # --------------------------------------------------------------------------- #
 # Lightweight, FUNCTION-SCOPED model-output taint tracking (Python only, via ast).
@@ -175,7 +176,9 @@ class AISecurityScanner:
             return []
 
         findings: list[Finding] = []
-        lines = text.splitlines()
+        # Cap per-line length before regex matching so a single very long line
+        # can't trigger catastrophic backtracking in the `.*?`/`[^\n]*?` rules.
+        lines = [ln[:_MAX_LINE_LEN] for ln in text.splitlines()]
         for idx, line in enumerate(lines):
             lineno = idx + 1
             if _INLINE_IGNORE.search(line):
@@ -307,9 +310,9 @@ def severity_counts(findings: list[Finding]) -> dict[str, int]:
 def exceeds_threshold(findings: list[Finding], fail_on: str) -> bool:
     """True if any finding is at ``fail_on`` severity or above.
 
-    Fails **closed**: an unknown ``fail_on`` maps to the most permissive threshold
-    (any finding trips the gate) so a config typo can never silently downgrade the
-    gate. Callers should also validate ``fail_on`` up front (see the CLI).
+    Fails **closed**: an unknown ``fail_on`` maps to the strictest threshold (any
+    finding, at any severity, trips the gate) so a config typo can never silently
+    downgrade the gate. Callers should also validate ``fail_on`` up front (see the CLI).
     """
     threshold = SEVERITY_ORDER.get(fail_on.upper(), max(SEVERITY_ORDER.values()))
     return any(SEVERITY_ORDER.get(f.severity, 9) <= threshold for f in findings)

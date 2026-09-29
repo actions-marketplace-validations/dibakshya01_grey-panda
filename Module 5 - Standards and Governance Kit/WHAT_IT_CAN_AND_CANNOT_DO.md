@@ -4,6 +4,8 @@
 
 Security tools earn trust by being honest about their limits. This document lists, for every capability, its **confidence level** and the **condition under which it fails**. If a control isn't listed here as "High confidence," don't bet your production system on it alone. Grey Panda is a **strong floor, not a ceiling**, and it is one layer of defense in depth.
 
+> ✅ **A deliberate non-feature that's actually a strength: Grey Panda's core makes NO LLM calls.** It's pure deterministic code (regex + `ast`), so: the *same code always yields the same verdict* (your CI gate never flakes), it runs **fully offline**, your **source never leaves your machine** (no data-egress — ironic for a security scanner to avoid), it's **free** (no per-scan API cost), and it's **fast**. An AI-security tool you can trust *because* it's boring and predictable. (Semantic, LLM-powered review is best handled by the AI IDE you already use — Grey Panda ships as an MCP server it can call — or, later, as an explicit opt-in layer; never baked into the gate.)
+
 ---
 
 ## ✅ What it CAN do
@@ -11,7 +13,7 @@ Security tools earn trust by being honest about their limits. This document list
 ### Prompt & input security
 | Capability | How | Confidence |
 |---|---|---|
-| Block known injection phrasings | `PromptGuardrail` baseline + your `extra_patterns` | **High** |
+| Block **exact** known injection phrasings | `PromptGuardrail` baseline + your `extra_patterns` | **High** on exact phrasings; **close paraphrases slip** (e.g. "disregard the above", or a word inserted mid-phrase). It is a cheap first filter — `SecureContextBuilder` is the genuinely stronger, structural control. |
 | Strip invisible / bidi / tag Unicode (Trojan Source, ASCII smuggling) | Unicode range stripping + NFKC normalisation | **High** |
 | Enforce input size limits | length guard | **High** |
 | Separate instructions from untrusted data | `SecureContextBuilder` nonce-fenced trust tagging (untrusted content under the `user` role) | **Medium–High** (structural; a single-prompt fence is defence-in-depth, not a guarantee) |
@@ -29,7 +31,7 @@ Security tools earn trust by being honest about their limits. This document list
 ### Agent security
 | Capability | How | Confidence |
 |---|---|---|
-| Enforce the Rule of Two / lethal-trifecta at construction | `AgentSecurityWrapper` init check | **High** |
+| Enforce the constraint you **declare** (Rule of Two / lethal-trifecta) | `AgentSecurityWrapper` init check | **High** — but it acts on the three booleans *you* set. A developer who under-declares (e.g. omits `can_communicate_externally=True`) silently bypasses it; there is no runtime introspection. |
 | Deny-by-default tool allowlist | per-session validation | **High** |
 | Human-in-the-loop gate on irreversible tools | `requires_hitl` + fail-secure default | **High** (gate is as strong as its callback) |
 | Per-session call budgets | counters | **High** |

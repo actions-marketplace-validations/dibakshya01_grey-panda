@@ -103,8 +103,11 @@ class Guardian:
 
     Args:
         policies: Ordered list of policy callables.
-        default: Disposition when no policy returns a decision. Defaults to ALLOW;
-            set to ``Disposition.ASK`` or ``DENY`` for a fail-closed posture.
+        default: Disposition when no policy returns a decision. Defaults to ALLOW
+            for composability (you add your own deny/allowlist policies). **This is
+            fail-OPEN: an action no policy matched is permitted.** For a security
+            posture, pass ``default=Disposition.DENY`` (or ``ASK``) and add explicit
+            allow policies — an allowlist is safer than a denylist.
     """
 
     _RANK = {
