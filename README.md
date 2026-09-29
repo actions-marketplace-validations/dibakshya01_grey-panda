@@ -11,12 +11,17 @@
   <a href="pyproject.toml"><img alt="Python 3.9+" src="https://img.shields.io/badge/python-3.9%2B-1c222a?style=for-the-badge&labelColor=1c222a&color=3f4753"></a>
   <a href="pyproject.toml"><img alt="Zero runtime dependencies" src="https://img.shields.io/badge/runtime%20deps-0-1c222a?style=for-the-badge&labelColor=1c222a&color=12b886"></a>
   <a href="Module%205%20-%20Standards%20and%20Governance%20Kit/WHAT_IT_CAN_AND_CANNOT_DO.md"><img alt="Deterministic — no LLM in the loop" src="https://img.shields.io/badge/deterministic-no%20LLM%20in%20the%20loop-1c222a?style=for-the-badge&labelColor=1c222a&color=12b886"></a>
+  <a href="Module%204%20-%20MCP%20and%20Agent%20Security%20Kit/HOW-TO-run-the-mcp-server.md"><img alt="MCP-ready — ships as an MCP server" src="https://img.shields.io/badge/MCP-ready%20·%20ships%20as%20a%20server-1c222a?style=for-the-badge&labelColor=1c222a&color=12b886"></a>
   <a href="Module%205%20-%20Standards%20and%20Governance%20Kit/mappings"><img alt="OWASP anchored" src="https://img.shields.io/badge/OWASP-LLM·Agentic·AISVS·MCP-1c222a?style=for-the-badge&labelColor=1c222a&color=3f4753"></a>
   <a href="CONTRIBUTING.md"><img alt="PRs welcome" src="https://img.shields.io/badge/PRs-welcome-1c222a?style=for-the-badge&labelColor=1c222a&color=12b886"></a>
 </p>
 
 <p align="center">
   <b>A zero-dependency, standards-anchored AI security toolkit that any developer or security reviewer can run in seconds — in the IDE, in CI, or from the terminal.</b>
+</p>
+
+<p align="center">
+  <sub>🔌 <b>MCP-native.</b> Grey Panda <i>secures</i> MCP <b>and ships as an MCP server</b> — wire it into Claude Code, Cursor, Windsurf, or VS Code with one command and review code without leaving your editor. <a href="#-in-your-ide">Jump to setup ↓</a></sub>
 </p>
 
 <p align="center">
@@ -156,13 +161,15 @@ uvx grey-panda scan .            # zero-install run
 
 ## 🤝 In your IDE
 
-Grey Panda *secures* MCP — and ships **as** an MCP server, so Claude Code, Cursor, Windsurf, or VS Code can call it while you code:
+Grey Panda *secures* MCP — and ships **as** an MCP server, so Claude Code, Cursor, Windsurf, or VS Code can call it while you code. One command wires it into Claude Code:
 
-```jsonc
-{ "mcpServers": { "grey-panda": { "command": "gp", "args": ["mcp"] } } }
+```bash
+claude mcp add grey-panda -- gp mcp
 ```
 
-Then ask your assistant to *"review this file with grey panda"* or *"explain LLM03"*. Details: **[Module 1 → HOW-TO-use-in-your-ide](Module%201%20-%20Developer%20Kit/HOW-TO-use-in-your-ide.md)** and **[Module 4 → HOW-TO-run-the-mcp-server](Module%204%20-%20MCP%20and%20Agent%20Security%20Kit/HOW-TO-run-the-mcp-server.md)**.
+<sub>Cursor / Windsurf / VS Code use a tiny config file — see the how-to. The server is <b>deterministic</b>: the model in your IDE does the reasoning, Grey Panda hands back reproducible, OWASP-cited findings.</sub>
+
+Then ask your assistant *"review this file with grey panda"*, *"are we AISVS Level 2 ready?"*, or *"explain LLM01:2026"*. It exposes six tools — scan, review-snippet, verify, explain-risk, list-standards, checklist. Details: **[Module 1 → HOW-TO-use-in-your-ide](Module%201%20-%20Developer%20Kit/HOW-TO-use-in-your-ide.md)** and **[Module 4 → HOW-TO-run-the-mcp-server](Module%204%20-%20MCP%20and%20Agent%20Security%20Kit/HOW-TO-run-the-mcp-server.md)**.
 
 ## 🧭 Honest about limits
 

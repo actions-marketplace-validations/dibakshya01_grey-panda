@@ -18,9 +18,15 @@ your client, e.g. Claude Code::
 Tools exposed:
     * greypanda_scan_path       — scan a file/directory for AI/agent/MCP issues
     * greypanda_review_snippet  — scan a code snippet inline
+    * greypanda_verify          — AISVS Level 1/2/3 verification report for a path
     * greypanda_explain_risk    — explain an OWASP/AISVS/ACS control by ID
     * greypanda_list_standards  — list the standards + control IDs Grey Panda knows
     * greypanda_checklist       — return the AI security checklist
+
+Everything it returns is produced by Grey Panda's deterministic engine (regex +
+``ast`` + the standards pack) — no model call is made here. The LLM is the client
+calling this server; Grey Panda supplies the reproducible, standards-cited ground
+truth it reasons over.
 """
 
 from __future__ import annotations
@@ -37,7 +43,11 @@ from ..data import all_standards, lookup
 from ..scanner.engine import AISecurityScanner
 from ..scanner.reporters import report_json, report_markdown
 
+# The MCP protocol revision this server implements. If a client asks for one we
+# do not recognise, we answer with this (the spec's negotiation fallback) rather
+# than blindly echoing an unsupported version back.
 PROTOCOL_VERSION = "2025-06-18"
+SUPPORTED_PROTOCOLS = frozenset({"2025-06-18", "2025-03-26", "2024-11-05"})
 
 TOOLS: list[dict[str, Any]] = [
     {
@@ -67,6 +77,22 @@ TOOLS: list[dict[str, Any]] = [
                 "profile": {"type": "string", "enum": ["solo", "team", "enterprise"], "default": "team"},
             },
             "required": ["code"],
+        },
+    },
+    {
+        "name": "greypanda_verify",
+        "description": "Run an AISVS (AI Security Verification Standard) Level 1/2/3 check "
+                       "over a path and return a Markdown report of which requirements are "
+                       "checked, failed, or need human attestation. A clean pass means 'no "
+                       "violation detected', not 'control proven present'.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "path": {"type": "string", "description": "File or directory path to verify.", "default": "."},
+                "level": {"type": "integer", "enum": [1, 2, 3], "default": 1, "description": "AISVS level (1=baseline, 3=strictest)."},
+                "profile": {"type": "string", "enum": ["solo", "team", "enterprise"], "default": "enterprise"},
+            },
+            "required": ["path"],
         },
     },
     {
@@ -127,6 +153,19 @@ def _tool_review_snippet(args: dict[str, Any]) -> dict[str, Any]:
     return _text(report_markdown(findings, filename, elapsed, profile))
 
 
+def _tool_verify(args: dict[str, Any]) -> dict[str, Any]:
+    from ..verify.aisvs import report_markdown as verify_md
+    from ..verify.aisvs import verify_aisvs
+
+    path = args.get("path", ".")
+    level = int(args.get("level", 1))
+    if level not in (1, 2, 3):
+        level = 1
+    profile = args.get("profile", "enterprise")
+    report = verify_aisvs(path, level=level, profile=profile)
+    return _text(verify_md(report))
+
+
 def _tool_explain_risk(args: dict[str, Any]) -> dict[str, Any]:
     cid = args.get("control_id", "").strip()
     entry = lookup(cid)
@@ -162,20 +201,28 @@ def _tool_checklist(_args: dict[str, Any]) -> dict[str, Any]:
 _DISPATCH = {
     "greypanda_scan_path": _tool_scan_path,
     "greypanda_review_snippet": _tool_review_snippet,
+    "greypanda_verify": _tool_verify,
     "greypanda_explain_risk": _tool_explain_risk,
     "greypanda_list_standards": _tool_list_standards,
     "greypanda_checklist": _tool_checklist,
 }
 
 
-def _handle(msg: dict[str, Any]) -> dict[str, Any] | None:
+def _handle(msg: Any) -> dict[str, Any] | None:
+    # A well-formed JSON line that is not a JSON-RPC request object (e.g. a bare
+    # value, or a batch array we don't support) must never crash the loop.
+    if not isinstance(msg, dict):
+        return None
     method = msg.get("method")
     mid = msg.get("id")
 
     if method == "initialize":
-        client_proto = (msg.get("params") or {}).get("protocolVersion", PROTOCOL_VERSION)
+        requested = (msg.get("params") or {}).get("protocolVersion")
+        # Honour the client's version when we support it; otherwise fall back to
+        # ours so the handshake still completes with a version we actually speak.
+        proto = requested if requested in SUPPORTED_PROTOCOLS else PROTOCOL_VERSION
         return _ok(mid, {
-            "protocolVersion": client_proto,
+            "protocolVersion": proto,
             "capabilities": {"tools": {"listChanged": False}},
             "serverInfo": {"name": "grey-panda", "version": __version__},
         })
@@ -209,10 +256,22 @@ def _err(mid: Any, code: int, message: str) -> dict[str, Any]:
     return {"jsonrpc": "2.0", "id": mid, "error": {"code": code, "message": message}}
 
 
-def serve_stdio() -> None:
-    """Run the MCP server loop over stdin/stdout until EOF."""
-    stdin = sys.stdin
-    stdout = sys.stdout
+def serve_stdio(stdin: Any = None, stdout: Any = None, banner: bool = True) -> None:
+    """Run the MCP server loop over newline-delimited JSON-RPC until EOF.
+
+    Reads requests from ``stdin`` and writes responses to ``stdout`` (defaulting
+    to the process streams). Streams are injectable so the loop can be tested.
+    ``stdout`` carries JSON-RPC *only*; any human-readable status goes to stderr,
+    so it can never corrupt the protocol stream a client is parsing.
+    """
+    stdin = stdin if stdin is not None else sys.stdin
+    stdout = stdout if stdout is not None else sys.stdout
+
+    if banner:
+        # stderr, never stdout — the client reads stdout as pure protocol.
+        print(f"grey-panda MCP server v{__version__} ready "
+              f"({len(TOOLS)} tools, stdio JSON-RPC).", file=sys.stderr, flush=True)
+
     while True:
         line = stdin.readline()
         if not line:
@@ -224,7 +283,11 @@ def serve_stdio() -> None:
             msg = json.loads(line)
         except json.JSONDecodeError:
             continue
-        response = _handle(msg)
+        try:
+            response = _handle(msg)
+        except Exception as exc:  # a bad request must never take the server down
+            mid = msg.get("id") if isinstance(msg, dict) else None
+            response = _err(mid, -32603, f"internal error: {exc}") if mid is not None else None
         if response is not None:
             stdout.write(json.dumps(response, separators=(",", ":")) + "\n")
             stdout.flush()

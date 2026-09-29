@@ -4,6 +4,34 @@ All notable changes to Grey Panda are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.6] — 2026-09-30
+
+MCP server made launch-ready — Grey Panda's in-IDE distribution surface.
+
+### Added
+- **`greypanda_verify` MCP tool** — runs an AISVS Level 1/2/3 verification over a
+  path and returns the checked / failed / attest report, so an assistant can answer
+  "are we AISVS Level 2 ready?" in-editor. The server now exposes **six** tools.
+- **First-class test coverage for the stdio MCP server** (`test_mcpserver.py`, 24
+  tests): the `initialize` handshake and protocol negotiation, tool discovery, every
+  tool, the JSON-RPC error paths, tool-exception → `isError`, and the full
+  stdin→stdout loop driven through injected streams (including surviving garbage
+  input). Previously the launch-critical server had **zero** direct tests.
+- **Frictionless install docs** for Claude Code (`claude mcp add grey-panda -- gp
+  mcp`), Cursor, Windsurf, and VS Code (which uses the `servers` key), plus a
+  prominent "MCP-native" callout on the README and website.
+
+### Changed / hardened
+- The server no longer echoes an **unsupported** protocol version back to the client;
+  it negotiates down to a version it actually speaks (`SUPPORTED_PROTOCOLS`).
+- A well-formed JSON line that isn't a JSON-RPC request object (a bare value, or a
+  batch array) is ignored instead of crashing the loop, and any per-message
+  exception is caught and returned as a JSON-RPC internal error — one bad request can
+  never take the server down.
+- On start-up the server prints a one-line readiness banner to **stderr** (never
+  stdout, which stays pure protocol) so you can confirm it launched in your client's
+  MCP logs. `serve_stdio()` now accepts injectable streams for testing.
+
 ## [1.0.5] — 2026-09-30
 
 Round-3 hardening, driven by a third adversarial review — plus honest-labeling

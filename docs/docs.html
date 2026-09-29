@@ -145,13 +145,16 @@ answer = out.<span class="g">sanitize</span>(call_your_llm(clean)).sanitized_tex
     <div class="head reveal">
       <div class="kicker">In your IDE</div>
       <h2 class="disp">Call Grey Panda while you code</h2>
-      <p>Grey Panda ships as an MCP server, so Claude Code, Cursor, Windsurf, or VS Code can call it directly.</p>
+      <p>Grey Panda ships as an MCP server, so Claude Code, Cursor, Windsurf, or VS Code can call it directly. The model does the reasoning; Grey Panda hands back deterministic, OWASP-cited findings.</p>
     </div>
     <div class="codeblock reveal d1">
-<span class="c">// Claude Code / Cursor / Windsurf MCP config</span><br>
+<span class="c"># Claude Code — one command</span><br>
+$ claude mcp add grey-panda <span class="g">--</span> gp mcp<br>
+<br>
+<span class="c">// Cursor / Windsurf — .cursor/mcp.json (VS Code uses "servers")</span><br>
 { <span class="g">"mcpServers"</span>: { <span class="g">"grey-panda"</span>: { <span class="g">"command"</span>: <span class="g">"gp"</span>, <span class="g">"args"</span>: [<span class="g">"mcp"</span>] } } }
     </div>
-    <p style="margin-top:16px;color:var(--slate);">Then ask your assistant to <i>"review this file with grey panda"</i> or <i>"explain LLM03"</i>.</p>
+    <p style="margin-top:16px;color:var(--slate);">Six tools — scan, review-snippet, verify, explain-risk, list-standards, checklist. Then ask your assistant to <i>"review this file with grey panda"</i>, <i>"are we AISVS Level 2 ready?"</i>, or <i>"explain LLM01:2026"</i>.</p>
   </div>
 </section>
 

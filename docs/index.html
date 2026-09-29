@@ -33,7 +33,7 @@
 <header class="hero" id="top">
   <div class="grid"></div>
   <div class="wrap">
-    <div class="kicker reveal">Open-source · Zero-dependency · OWASP-anchored</div>
+    <div class="kicker reveal">Open-source · Zero-dependency · MCP-native · OWASP-anchored</div>
     <h1 class="disp reveal d1">The calm guardian for<br>AI, agent &amp; <span class="g">MCP</span> code.</h1>
     <p class="lede reveal d2">A standards-anchored AI security toolkit any developer or reviewer can run in seconds — in the IDE, in CI, or from the terminal. You never rewrite your LLM call. You wrap it.</p>
     <p class="lede reveal d2" style="font-size:clamp(14px,1.7vw,16px);color:#9aa6b4;margin-top:12px;">Deterministic by design — <b style="color:#c3cbd6;">no LLM in the loop</b>. Same code, same verdict, every run; fully offline, private, and free. Your gate never flakes and your source never leaves your machine.</p>
@@ -50,6 +50,7 @@
       <span class="badge">Python <b>3.9+</b></span>
       <span class="badge">runtime deps <b>0</b></span>
       <span class="badge">deterministic · <b>no LLM</b></span>
+      <span class="badge">🔌 <b>MCP-ready</b></span>
       <span class="badge"><b>26</b> scanner rules</span>
       <span class="badge">LLM · Agentic · AISVS · MCP</span>
     </div>
@@ -112,6 +113,29 @@
     <div class="card reveal d2" style="margin-top:26px;">
       <b class="disp" style="font-size:19px;">Building an agent?</b>
       <p style="margin-top:6px;font-size:16px;">Add <code style="color:var(--jade-d);font-weight:600;">AgentSecurityWrapper</code> — the Rule of Two enforced at construction, deny-by-default tools, HITL gates, per-session budgets, and a kill switch. See the <a href="architecture.html" style="color:var(--jade-d);font-weight:600;">architecture &rarr;</a></p>
+    </div>
+  </div>
+</section>
+
+<section id="ide">
+  <div class="wrap">
+    <div class="head reveal">
+      <div class="kicker">🔌 MCP-native</div>
+      <h2 class="disp">Ships as an MCP server. Call it while you code.</h2>
+      <p>Grey Panda <i>secures</i> MCP — and ships <b>as</b> an MCP server, so Claude Code, Cursor, Windsurf, or VS Code can call it right in your editor. The model does the reasoning; Grey Panda hands back deterministic, OWASP-cited findings. One command for Claude Code:</p>
+    </div>
+    <div class="install reveal d1" style="margin-top:22px;">
+      <span><span class="p">$</span> claude mcp add grey-panda -- gp mcp</span>
+      <button data-copy="claude mcp add grey-panda -- gp mcp">copy</button>
+    </div>
+    <div class="codeblock reveal d2">
+<span class="c">// Cursor / Windsurf → .cursor/mcp.json &nbsp;(VS Code uses the key "servers")</span><br>
+{ <span class="g">"mcpServers"</span>: { <span class="g">"grey-panda"</span>: { <span class="g">"command"</span>: <span class="g">"gp"</span>, <span class="g">"args"</span>: [<span class="g">"mcp"</span>] } } }
+    </div>
+    <div class="card reveal d2" style="margin-top:26px;">
+      <b class="disp" style="font-size:19px;">Six tools, then just ask.</b>
+      <p style="margin-top:6px;font-size:16px;"><span class="mono" style="color:var(--jade-d);font-weight:600;">scan · review-snippet · verify · explain-risk · list-standards · checklist</span><br>
+      <span style="color:var(--slate);">“review this file with grey panda” · “are we AISVS Level 2 ready?” · “explain LLM01:2026”</span></p>
     </div>
   </div>
 </section>
