@@ -1,0 +1,4 @@
+# GP-AI-007: unpinned AI dependencies (should be ==exact.version)
+openai
+langchain
+anthropic>=0.3

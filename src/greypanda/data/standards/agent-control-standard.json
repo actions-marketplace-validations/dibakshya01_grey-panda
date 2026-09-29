@@ -1,0 +1,13 @@
+{
+  "name": "Agent Control Standard (ACS)",
+  "version": "0.1.0",
+  "license": "Apache-2.0 (code/schemas) / CC BY-SA 4.0 (docs)",
+  "source": "https://github.com/GenAI-Security-Project/agent-control-standard",
+  "controls": [
+    {"id": "ACS-INSTRUMENT", "title": "Instrument (mandatory core)", "description": "A Guardian inspects agent actions at hook lifecycle points (e.g. steps/toolCallRequest, steps/toolCallResult) and returns a disposition before execution, over an authenticated channel.", "grey_panda_controls": ["Guardian", "HookContext", "HookDecision"]},
+    {"id": "ACS-DISPOSITIONS", "title": "Five Dispositions", "description": "Every Guardian verdict is one of: allow (permit unchanged), deny (block), modify (permit with overrides), ask (route to approver), defer (postpone pending context).", "grey_panda_controls": ["Disposition"]},
+    {"id": "ACS-TRACE", "title": "Trace (optional profile)", "description": "OpenTelemetry spans and OCSF events for audit trails of agent actions.", "grey_panda_controls": ["AuditLogger"]},
+    {"id": "ACS-INSPECT", "title": "Inspect / AgBOM (optional profile)", "description": "Agent Bill of Materials in CycloneDX/SPDX/SWID formats enumerating tools, models, MCP servers, and data sources.", "grey_panda_controls": ["agent_bill_of_materials"]},
+    {"id": "ACS-WIRE", "title": "Wire Protocol", "description": "JSON-RPC 2.0 request/response envelopes with acs_version, request_id, timestamp, metadata and typed payload; baseline HMAC-SHA256 signing specified.", "grey_panda_controls": ["Guardian", "HookDecision"]}
+  ]
+}

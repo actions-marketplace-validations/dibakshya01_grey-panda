@@ -1,0 +1,24 @@
+# Grey Panda ignore file (gitignore-style globs, matched on path or basename).
+# Loaded from the directory you scan — a repo-root .greypandaignore applies to
+# `gp scan .`.
+#
+# Grey Panda dogfoods: it scans its own repo in CI. The files below are excluded
+# because they legitimately CONTAIN attack signatures as data (that's their whole
+# job) or are intentionally-insecure teaching material — not because they are
+# vulnerable. Excluding a scanner's own rule definitions and test fixtures is
+# standard practice.
+
+# Detection-signature definitions (they hold the very patterns they detect):
+src/greypanda/scanner/rules.py
+src/greypanda/sdk/guardrails.py
+src/greypanda/sdk/mcp.py
+
+# The machine-readable standards pack (risk descriptions contain attack terms):
+src/greypanda/data/standards/*
+
+# Intentionally-vulnerable teaching example (documented as insecure on purpose):
+examples/vulnerable_app/*
+examples/example_usage.py
+
+# Test fixtures embed deliberate bad inputs:
+tests/*

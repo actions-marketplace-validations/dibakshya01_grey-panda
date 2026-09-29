@@ -1,0 +1,4 @@
+# Pinned to exact versions (the secure way).
+openai==1.51.0
+langchain==0.3.7
+anthropic==0.39.0

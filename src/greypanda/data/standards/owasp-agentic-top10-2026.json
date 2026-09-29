@@ -1,0 +1,78 @@
+{
+  "name": "OWASP Top 10 for Agentic Applications 2026",
+  "version": "2026",
+  "license": "CC BY-SA 4.0",
+  "source": "https://genai.owasp.org/",
+  "controls": [
+    {
+      "id": "ASI01",
+      "title": "Agent Goal Hijack",
+      "description": "Manipulated inputs redirect an agent's goals or plan, causing it to pursue attacker objectives across multiple steps.",
+      "remediation": "Tag untrusted content; constrain tools with an allowlist; gate irreversible steps with HITL.",
+      "grey_panda_controls": ["SecureContextBuilder", "AgentSecurityWrapper", "Guardian"]
+    },
+    {
+      "id": "ASI02",
+      "title": "Tool Misuse and Exploitation",
+      "description": "An agent is induced to call tools in unintended, dangerous ways, or a tool itself is exploited.",
+      "remediation": "Deny-by-default allowlist, JSON-schema argument validation, HITL on side effects, ACS Guardian dispositions.",
+      "grey_panda_controls": ["AgentSecurityWrapper", "McpServerGuard", "Guardian"]
+    },
+    {
+      "id": "ASI03",
+      "title": "Identity and Privilege Abuse",
+      "description": "Weak agent identity or over-broad delegated permissions let an agent act beyond its authority.",
+      "remediation": "Give each agent/non-human a scoped identity; use short-lived, least-privilege tokens; avoid shared service identities.",
+      "grey_panda_controls": ["AgentSecurityWrapper"]
+    },
+    {
+      "id": "ASI04",
+      "title": "Agentic Supply Chain Vulnerabilities",
+      "description": "Tools, MCP servers, plugins, and models introduce risk through the agent's supply chain, including tool poisoning and rug pulls.",
+      "remediation": "Pin and hash tool manifests (McpToolManifest); vet third-party MCP servers; maintain an AgBOM.",
+      "grey_panda_controls": ["McpToolManifest", "McpServerGuard", "agent_bill_of_materials"]
+    },
+    {
+      "id": "ASI05",
+      "title": "Unexpected Code Execution (RCE)",
+      "description": "Model or tool input reaches a code/shell/eval sink and executes arbitrary code.",
+      "remediation": "Never pass model input to a shell/eval; validate against schema; sandbox tool execution in containers.",
+      "grey_panda_controls": ["McpServerGuard"]
+    },
+    {
+      "id": "ASI06",
+      "title": "Memory & Context Poisoning",
+      "description": "An agent's short- or long-term memory is corrupted, causing persistent flawed or malicious behaviour.",
+      "remediation": "Validate every memory write, attach source attribution, isolate memory per user/session, apply TTLs.",
+      "grey_panda_controls": ["SecureContextBuilder"]
+    },
+    {
+      "id": "ASI07",
+      "title": "Insecure Inter-Agent Communication",
+      "description": "Messages between agents are trusted without authentication, allowing forged instructions and lateral movement.",
+      "remediation": "Authenticate inter-agent messages; sign and verify payloads; use the ACS wire format with signing.",
+      "grey_panda_controls": ["Guardian"]
+    },
+    {
+      "id": "ASI08",
+      "title": "Cascading Failures",
+      "description": "A failure or malicious action in one agent/tool propagates through a multi-agent system.",
+      "remediation": "Bound call budgets and recursion; isolate blast radius; add circuit breakers and a kill switch.",
+      "grey_panda_controls": ["AgentSecurityWrapper"]
+    },
+    {
+      "id": "ASI09",
+      "title": "Human-Agent Trust Exploitation",
+      "description": "Users are manipulated by or through an agent into unsafe actions, over-trusting its output.",
+      "remediation": "Show provenance and tool transparency; keep confirmations meaningful; sanitize output.",
+      "grey_panda_controls": ["OutputGuardrail"]
+    },
+    {
+      "id": "ASI10",
+      "title": "Rogue Agents",
+      "description": "An agent becomes misaligned and acts autonomously against intended objectives without active attacker control.",
+      "remediation": "Continuous monitoring and audit; kill switch; ACS Guardian oversight and deny policies.",
+      "grey_panda_controls": ["AgentSecurityWrapper", "Guardian", "AuditLogger"]
+    }
+  ]
+}

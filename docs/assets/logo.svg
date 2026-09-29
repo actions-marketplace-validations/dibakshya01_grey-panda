@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-label="Grey Panda logo">
+  <title>Grey Panda</title>
+
+  <!-- soft badge so the mark reads on light AND dark themes -->
+  <circle cx="100" cy="100" r="94" fill="#eef2f7"/>
+  <circle cx="100" cy="100" r="94" fill="none" stroke="#9aa4b2" stroke-width="2" opacity="0.6"/>
+
+  <!-- ears -->
+  <circle cx="52" cy="56" r="26" fill="#1f2937"/>
+  <circle cx="148" cy="56" r="26" fill="#1f2937"/>
+
+  <!-- head -->
+  <circle cx="100" cy="106" r="62" fill="#ffffff" stroke="#1f2937" stroke-width="3"/>
+
+  <!-- eye patches (angled, calm) -->
+  <ellipse cx="76" cy="98" rx="18" ry="23" fill="#1f2937" transform="rotate(-16 76 98)"/>
+  <ellipse cx="124" cy="98" rx="18" ry="23" fill="#1f2937" transform="rotate(16 124 98)"/>
+  <!-- grey accent on the patches: the "grey" in Grey Panda -->
+  <ellipse cx="76" cy="98" rx="8" ry="11" fill="#6b7280" transform="rotate(-16 76 98)" opacity="0.55"/>
+  <ellipse cx="124" cy="98" rx="8" ry="11" fill="#6b7280" transform="rotate(16 124 98)" opacity="0.55"/>
+
+  <!-- eyes -->
+  <circle cx="78" cy="100" r="5.5" fill="#ffffff"/>
+  <circle cx="122" cy="100" r="5.5" fill="#ffffff"/>
+  <circle cx="79" cy="101" r="2.6" fill="#111827"/>
+  <circle cx="121" cy="101" r="2.6" fill="#111827"/>
+
+  <!-- nose + calm mouth -->
+  <path d="M100 118 l-9 -7 h18 z" fill="#1f2937"/>
+  <path d="M100 118 v9 M100 127 q-9 7 -17 2 M100 127 q9 7 17 2" fill="none" stroke="#1f2937" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- subtle shield notch at the chin: the guardian motif -->
+  <path d="M84 150 q16 12 32 0 q-16 20 -16 20 q0 0 -16 -20 z" fill="#1f2937" opacity="0.9"/>
+</svg>

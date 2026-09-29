@@ -1,0 +1,28 @@
+Grey Panda
+Copyright 2026 Grey Panda contributors
+
+This product includes software developed by the Grey Panda contributors.
+Licensed under the Apache License, Version 2.0.
+
+------------------------------------------------------------------------------
+Standards attribution
+------------------------------------------------------------------------------
+Grey Panda is anchored to, and cites, the following third-party standards. These
+standards are the intellectual property of their respective authors and are used
+here for identification and interoperability. Grey Panda is an independent project
+and is not endorsed by these projects.
+
+- OWASP Top 10 for LLM Applications 2026 (CC BY-SA 4.0) — OWASP GenAI Security Project
+- OWASP GenAI Data Security Risks and Mitigations 2026 (CC BY-SA 4.0)
+- OWASP Top 10 for Agentic Applications 2026 (CC BY-SA 4.0)
+- OWASP AI Security Verification Standard (AISVS) (CC BY-SA 4.0)
+- OWASP A Practical Guide for Secure MCP Server Development (CC BY-SA 4.0)
+- OWASP A Practical Guide for Securely Using Third-Party MCP Servers (CC BY-SA 4.0)
+- OWASP State of Agentic AI Security and Governance v2.01 (CC BY-SA 4.0)
+- Agent Control Standard (ACS) (Apache-2.0 / CC BY-SA 4.0) — OWASP GenAI Security Project
+- NIST AI 100-2 E2025
+- Meta "Agents Rule of Two" (2025); Simon Willison, "the lethal trifecta"
+
+OWASP® is a registered trademark of the OWASP Foundation, Inc. Use of the OWASP
+name and standard identifiers is for accurate description and interoperability
+only and does not imply endorsement.

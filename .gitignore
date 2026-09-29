@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+*.egg
+
+# Virtual envs
+.venv/
+venv/
+env/
+
+# Tooling caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.coverage
+htmlcov/
+
+# Grey Panda outputs
+grey-panda.sarif
+grey_panda_report.md
+findings.json
+*.greypanda.local.toml
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+*.swp

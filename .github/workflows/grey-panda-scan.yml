@@ -1,0 +1,68 @@
+name: Grey Panda AI Security Scan
+# Reusable AI security gate. Copy this into any repo that ships AI/agent/MCP code
+# (or run `gp init` to generate it). It uploads SARIF to code scanning, comments a
+# Markdown report on the PR, and fails on HIGH+.
+
+on:
+  pull_request:
+    branches: [main, master, "release/**"]
+  push:
+    branches: [main, master]
+
+permissions:
+  contents: read
+  pull-requests: write
+  security-events: write
+
+jobs:
+  grey-panda:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Grey Panda
+        run: pip install grey-panda
+
+      - name: Scan → SARIF (for code scanning, inline in the PR diff)
+        run: gp scan . --profile team --format sarif --output grey-panda.sarif --fail-on HIGH
+        continue-on-error: true
+
+      - name: Upload SARIF to code scanning
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: grey-panda.sarif
+          category: grey-panda
+
+      - name: Scan → Markdown report
+        if: always()
+        run: gp scan . --profile team --format markdown --output grey-panda-report.md --fail-on HIGH
+        continue-on-error: true
+
+      - name: Comment report on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            let body = fs.readFileSync('grey-panda-report.md', 'utf8');
+            if (body.length > 65000) body = body.slice(0, 65000) + '\n\n> …truncated. See the SARIF artifact for the full list.';
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body,
+            });
+
+      - name: Upload JSON artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: grey-panda-report
+          path: grey-panda.sarif
+
+      - name: Enforce the gate (fail on HIGH+)
+        run: gp scan . --profile team --fail-on HIGH

@@ -1,0 +1,66 @@
+{
+  "name": "OWASP AI Security Verification Standard (AISVS)",
+  "version": "1.0",
+  "license": "CC BY-SA 4.0",
+  "source": "https://github.com/OWASP/AISVS",
+  "levels": {
+    "1": "Essential baseline controls for all AI systems",
+    "2": "Standard controls for production / sensitive-data systems",
+    "3": "Advanced controls for high-assurance / critical environments"
+  },
+  "note": "Chapters are the authoritative AISVS taxonomy. The requirements below are a curated, representative subset that Grey Panda verifies or guides on; consult the full AISVS for the complete requirement list.",
+  "controls": [
+    {"id": "C1", "title": "Training Data Integrity & Traceability", "level": 1, "description": "Provenance, integrity, and traceability of training and fine-tuning data.", "grey_panda_controls": ["agent_bill_of_materials"], "requirements": [
+      {"id": "C1.1.1", "level": 1, "text": "Training and fine-tuning data sources are documented with provenance.", "verify": "manual"},
+      {"id": "C1.2.1", "level": 2, "text": "Data integrity is verified (hashes/signatures) before training.", "verify": "manual"}
+    ]},
+    {"id": "C2", "title": "Input Validation", "level": 1, "description": "Validation, sanitization, and trust-tagging of all inputs to the model.", "grey_panda_controls": ["PromptGuardrail", "SecureContextBuilder"], "requirements": [
+      {"id": "C2.1.1", "level": 1, "text": "Untrusted input is separated from instructions (structural separation).", "verify": "scanner", "scanner_rules": ["GP-AI-001", "GP-AI-002"]},
+      {"id": "C2.2.1", "level": 1, "text": "Inputs are screened for known injection patterns and invisible Unicode.", "verify": "sdk", "grey_panda_controls": ["PromptGuardrail"]},
+      {"id": "C2.3.1", "level": 2, "text": "Retrieved and external content is tagged as untrusted before use.", "verify": "scanner", "scanner_rules": ["GP-AI-017"]}
+    ]},
+    {"id": "C3", "title": "Model Lifecycle Management & Change Control", "level": 2, "description": "Governed lifecycle and change control for models.", "grey_panda_controls": [], "requirements": [
+      {"id": "C3.1.1", "level": 2, "text": "Model versions and changes are tracked and approved.", "verify": "manual"}
+    ]},
+    {"id": "C4", "title": "Infrastructure, Configuration & Deployment Security", "level": 1, "description": "Hardened, least-privilege deployment of AI components.", "grey_panda_controls": [], "requirements": [
+      {"id": "C4.1.1", "level": 1, "text": "No secrets are hardcoded in source or config.", "verify": "scanner", "scanner_rules": ["GP-AI-010"]},
+      {"id": "C4.2.1", "level": 2, "text": "AI services run containerized, non-root, network-restricted.", "verify": "manual"}
+    ]},
+    {"id": "C5", "title": "Access Control & Identity for AI Components & Users", "level": 1, "description": "Authentication and authorization for AI components and users.", "grey_panda_controls": ["AgentSecurityWrapper"], "requirements": [
+      {"id": "C5.1.1", "level": 1, "text": "AI components authenticate with scoped, least-privilege identities.", "verify": "manual"},
+      {"id": "C5.2.1", "level": 2, "text": "Retrieval is filtered by the requesting user's identity.", "verify": "scanner", "scanner_rules": ["GP-AI-009"]}
+    ]},
+    {"id": "C6", "title": "Supply Chain Security for Models", "level": 1, "description": "Integrity and provenance of models, datasets, and dependencies.", "grey_panda_controls": ["agent_bill_of_materials"], "requirements": [
+      {"id": "C6.1.1", "level": 1, "text": "AI dependencies are pinned to exact versions.", "verify": "scanner", "scanner_rules": ["GP-AI-007"]},
+      {"id": "C6.2.1", "level": 2, "text": "An AIBOM/AgBOM is produced and reviewed.", "verify": "sdk", "grey_panda_controls": ["agent_bill_of_materials"]}
+    ]},
+    {"id": "C7", "title": "Model Behavior, Output Control & Safety Assurance", "level": 1, "description": "Control and validation of model outputs before downstream use.", "grey_panda_controls": ["OutputGuardrail"], "requirements": [
+      {"id": "C7.1.1", "level": 1, "text": "Model output is not rendered as HTML/SQL/code without sanitization/validation.", "verify": "scanner", "scanner_rules": ["GP-AI-004", "GP-AI-014"]},
+      {"id": "C7.2.1", "level": 2, "text": "Output is scanned for sensitive data before it leaves the system.", "verify": "sdk", "grey_panda_controls": ["OutputGuardrail", "DLPScanner"]}
+    ]},
+    {"id": "C8", "title": "Memory, Embeddings & Vector Database Security", "level": 2, "description": "Security of memory, embeddings, and vector stores.", "grey_panda_controls": ["SecureContextBuilder"], "requirements": [
+      {"id": "C8.1.1", "level": 2, "text": "Vector queries enforce per-user access filters.", "verify": "scanner", "scanner_rules": ["GP-AI-009"]},
+      {"id": "C8.2.1", "level": 2, "text": "Memory writes are validated and attributed.", "verify": "scanner", "scanner_rules": ["GP-AGT-007"]}
+    ]},
+    {"id": "C9", "title": "Orchestration & Agentic Security", "level": 2, "description": "Security of agent orchestration, tools, and autonomy.", "grey_panda_controls": ["AgentSecurityWrapper", "Guardian"], "requirements": [
+      {"id": "C9.1.1", "level": 2, "text": "Tools are deny-by-default with an explicit allowlist.", "verify": "sdk", "grey_panda_controls": ["AgentSecurityWrapper"]},
+      {"id": "C9.2.1", "level": 2, "text": "Irreversible actions require human-in-the-loop approval.", "verify": "scanner", "scanner_rules": ["GP-AGT-005", "GP-AGT-006"]},
+      {"id": "C9.3.1", "level": 3, "text": "Agents do not hold the full lethal trifecta without an approval gate (Rule of Two).", "verify": "sdk", "grey_panda_controls": ["AgentSecurityWrapper"]},
+      {"id": "C9.4.1", "level": 3, "text": "A kill switch halts agent tool calls within seconds.", "verify": "sdk", "grey_panda_controls": ["AgentSecurityWrapper"]}
+    ]},
+    {"id": "C10", "title": "Model Context Protocol (MCP) Security", "level": 2, "description": "Security of MCP servers, clients, and tools.", "grey_panda_controls": ["McpServerGuard", "McpToolManifest"], "requirements": [
+      {"id": "C10.1.1", "level": 2, "text": "Tool manifests are pinned and hashed; changes (rug pulls) are detected.", "verify": "sdk", "grey_panda_controls": ["McpToolManifest"]},
+      {"id": "C10.2.1", "level": 2, "text": "Tool inputs/outputs are schema-validated and treated as untrusted.", "verify": "sdk", "grey_panda_controls": ["McpServerGuard"]},
+      {"id": "C10.3.1", "level": 2, "text": "Remote MCP connections use TLS and OAuth 2.1/OIDC; no token passthrough.", "verify": "scanner", "scanner_rules": ["GP-MCP-003", "GP-MCP-004"]},
+      {"id": "C10.4.1", "level": 3, "text": "MCP tool descriptions are checked for poisoning markers.", "verify": "scanner", "scanner_rules": ["GP-MCP-001"]},
+      {"id": "C10.5.1", "level": 2, "text": "MCP tools never pass model input to a shell/eval sink.", "verify": "scanner", "scanner_rules": ["GP-MCP-002"]}
+    ]},
+    {"id": "C11", "title": "Adversarial Robustness", "level": 3, "description": "Resistance to adversarial and evasion attacks.", "grey_panda_controls": [], "requirements": [
+      {"id": "C11.1.1", "level": 3, "text": "The system is red-teamed for prompt injection and evasion before launch.", "verify": "manual"}
+    ]},
+    {"id": "C12", "title": "Monitoring, Logging & Anomaly Detection", "level": 1, "description": "Observability without leaking sensitive data.", "grey_panda_controls": ["AuditLogger"], "requirements": [
+      {"id": "C12.1.1", "level": 1, "text": "Security-relevant AI events are logged with no raw prompt/response text.", "verify": "scanner", "scanner_rules": ["GP-AI-011"]},
+      {"id": "C12.2.1", "level": 2, "text": "Audit events are shipped to a monitored SIEM with alerting.", "verify": "manual"}
+    ]}
+  ]
+}

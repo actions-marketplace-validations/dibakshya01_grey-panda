@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 🔒 Report a security vulnerability in Grey Panda
+    url: https://github.com/greypanda/grey-panda/security/advisories/new
+    about: Please report vulnerabilities privately — see SECURITY.md. Do not open a public issue.
+  - name: 💬 Questions & discussion
+    url: https://github.com/greypanda/grey-panda/discussions
+    about: Ask questions and share ideas with the community.

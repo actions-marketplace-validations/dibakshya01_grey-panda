@@ -1,0 +1,17 @@
+{
+  "name": "OWASP MCP Security (Secure MCP Server Development + Third-Party MCP)",
+  "version": "1.0 (Feb 2026) / Cheat Sheet 1.0 (Oct 2025)",
+  "license": "CC BY-SA 4.0",
+  "source": "https://genai.owasp.org/",
+  "controls": [
+    {"id": "MCP-ARCH", "title": "Secure MCP Architecture", "description": "Prefer STDIO/Unix sockets locally; TLS 1.2+ and schema validation for remote; isolate users and sessions with per-session state and quotas.", "grey_panda_controls": ["McpServerGuard"], "scanner_rules": ["GP-MCP-004"]},
+    {"id": "MCP-TOOL", "title": "Safe Tool Design", "description": "Signed tool manifests verified at load; formal onboarding/approval; validate descriptions against behaviour; expose only minimal fields to the model.", "grey_panda_controls": ["McpToolManifest"], "scanner_rules": ["GP-MCP-001"]},
+    {"id": "MCP-VALIDATE", "title": "Data Validation & Resource Management", "description": "Treat all data as untrusted; enforce JSON schemas on tool inputs/outputs; sanitize and size-limit; quotas and timeouts per session.", "grey_panda_controls": ["McpServerGuard"], "scanner_rules": ["GP-MCP-002"]},
+    {"id": "MCP-INJECTION", "title": "Prompt Injection Controls", "description": "Structured JSON tool calls; HITL on high-risk actions; LLM-as-judge for policy; one task, one session (context compartmentalization).", "grey_panda_controls": ["Guardian", "SecureContextBuilder"], "scanner_rules": ["GP-MCP-001"]},
+    {"id": "MCP-AUTHZ", "title": "Authentication & Authorization", "description": "OAuth 2.1/OIDC mandatory for remote; short-lived scoped tokens; prohibit token passthrough (confused deputy); centralize policy enforcement.", "grey_panda_controls": ["McpServerGuard"], "scanner_rules": ["GP-MCP-003", "GP-MCP-004"]},
+    {"id": "MCP-DEPLOY", "title": "Secure Deployment & Updates", "description": "Secrets in vaults never exposed to the LLM; hardened non-root containers; network segmentation; pinned/scanned dependencies; CI/CD gates; safe error handling.", "grey_panda_controls": [], "scanner_rules": ["GP-AI-010", "GP-AI-007"]},
+    {"id": "MCP-GOV", "title": "Governance", "description": "Cryptographic integrity and version pinning; security peer review; immutable audit logs; non-human identity governance.", "grey_panda_controls": ["McpToolManifest", "AuditLogger"], "scanner_rules": []},
+    {"id": "MCP-VALIDATE-CONT", "title": "Tools & Continuous Validation", "description": "SAST with MCP rules and MCP-scan; SCA on dependencies; runtime isolation (seccomp/AppArmor); continuous SIEM monitoring; OpenSSF Scorecard.", "grey_panda_controls": ["AISecurityScanner"], "scanner_rules": []},
+    {"id": "MCP-3P-TRUST", "title": "Third-Party Trust Minimization", "description": "Do not assume servers are trustworthy; registry-only discovery; verify origin/signatures; pin versions; staged rollout; sandbox in containers; JIT scoped access.", "grey_panda_controls": ["McpServerGuard", "McpToolManifest"], "scanner_rules": ["GP-MCP-001", "GP-MCP-004"]}
+  ]
+}

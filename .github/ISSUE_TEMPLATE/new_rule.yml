@@ -1,0 +1,46 @@
+name: 🛡️ Propose a scanner rule
+description: Suggest a new Grey Panda scanner rule
+labels: ["rule", "good first issue"]
+body:
+  - type: input
+    id: title
+    attributes:
+      label: Rule title
+      description: e.g. "Agent tool exposes filesystem without sandbox"
+    validations:
+      required: true
+  - type: input
+    id: owasp
+    attributes:
+      label: OWASP / AISVS / ACS ID it maps to
+      description: e.g. LLM03:2026, ASI05, AISVS C10, DSGAI14
+    validations:
+      required: true
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Proposed severity
+      options: [CRITICAL, HIGH, MEDIUM, LOW]
+    validations:
+      required: true
+  - type: textarea
+    id: bad
+    attributes:
+      label: BAD example (should be flagged)
+      render: python
+    validations:
+      required: true
+  - type: textarea
+    id: good
+    attributes:
+      label: GOOD example (should pass — the suppress guard)
+      render: python
+    validations:
+      required: true
+  - type: textarea
+    id: remediation
+    attributes:
+      label: Remediation
+      description: The concrete fix, ideally naming a Grey Panda SDK control.
+    validations:
+      required: true

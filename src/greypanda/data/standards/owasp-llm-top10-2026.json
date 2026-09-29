@@ -1,0 +1,88 @@
+{
+  "name": "OWASP Top 10 for LLM Applications 2026",
+  "version": "2026 v1.0",
+  "license": "CC BY-SA 4.0",
+  "source": "https://genai.owasp.org/",
+  "controls": [
+    {
+      "id": "LLM01:2026",
+      "title": "Prompt Injection",
+      "description": "Untrusted input alters model behaviour, whether supplied directly by a user or indirectly through retrieved/tool content. The #1 AI attack pattern and requires no authentication.",
+      "remediation": "Separate instructions from data with SecureContextBuilder; screen inputs with PromptGuardrail; assume injection can succeed and limit blast radius.",
+      "grey_panda_controls": ["PromptGuardrail", "SecureContextBuilder"],
+      "scanner_rules": ["GP-AI-001", "GP-AI-002", "GP-AI-017"]
+    },
+    {
+      "id": "LLM02:2026",
+      "title": "Sensitive Information Disclosure",
+      "description": "The model or system leaks PII, secrets, or proprietary data through outputs, logs, reasoning channels, or side channels.",
+      "remediation": "Scan and redact input and output with DLPScanner; route calls through a gateway; never log raw text.",
+      "grey_panda_controls": ["DLPScanner", "AuditLogger", "OutputGuardrail"],
+      "scanner_rules": ["GP-AI-003", "GP-AI-010", "GP-AI-011"]
+    },
+    {
+      "id": "LLM03:2026",
+      "title": "Excessive Agency",
+      "description": "An agent has more capability, autonomy, or permission than the task needs, so a single manipulated instruction can cause outsized or irreversible damage.",
+      "remediation": "Apply least privilege with AgentSecurityWrapper: deny-by-default tool allowlist, HITL on irreversible actions, call budgets, kill switch, and the Rule of Two.",
+      "grey_panda_controls": ["AgentSecurityWrapper", "ToolPermission", "Guardian"],
+      "scanner_rules": ["GP-AGT-005", "GP-AGT-006"]
+    },
+    {
+      "id": "LLM04:2026",
+      "title": "Supply Chain",
+      "description": "Compromised or unvetted models, datasets, plugins, tool packages, or dependencies introduce vulnerabilities into the AI system.",
+      "remediation": "Pin dependencies to exact versions; verify signatures/provenance; maintain an AIBOM/AgBOM; scan dependencies in CI.",
+      "grey_panda_controls": ["agent_bill_of_materials"],
+      "scanner_rules": ["GP-AI-007"]
+    },
+    {
+      "id": "LLM05:2026",
+      "title": "Data and Model Poisoning",
+      "description": "Adversarial manipulation of training, fine-tuning, or embedding data corrupts model behaviour or embeds backdoors.",
+      "remediation": "Curate and review training data; validate and attribute sources; test for memorization on fine-tuned models.",
+      "grey_panda_controls": [],
+      "scanner_rules": []
+    },
+    {
+      "id": "LLM06:2026",
+      "title": "Unbounded Consumption",
+      "description": "Uncontrolled resource use — tokens, cost, recursion, tool calls — enabling denial of wallet/service.",
+      "remediation": "Set max_tokens and per-user rate limits; cap agent call budgets and recursion depth.",
+      "grey_panda_controls": ["AgentSecurityWrapper", "ToolPermission"],
+      "scanner_rules": ["GP-AI-012"]
+    },
+    {
+      "id": "LLM07:2026",
+      "title": "Misinformation",
+      "description": "The model produces confident but incorrect or misleading output that downstream systems or people act on.",
+      "remediation": "Validate model output against application logic; require citations/grounding; keep a human in the loop for high-stakes decisions.",
+      "grey_panda_controls": ["OutputGuardrail"],
+      "scanner_rules": []
+    },
+    {
+      "id": "LLM08:2026",
+      "title": "Hidden Context Exposure",
+      "description": "System prompts, tool schemas, permissions, or other hidden context are disclosed, expanding the attacker's map of the system.",
+      "remediation": "Never return system prompt content in responses; treat internal context as sensitive.",
+      "grey_panda_controls": ["SecureContextBuilder"],
+      "scanner_rules": ["GP-AI-008"]
+    },
+    {
+      "id": "LLM09:2026",
+      "title": "Vector and Embedding Weaknesses",
+      "description": "Flaws in embeddings and vector stores enable cross-user data bleed, poisoning, or inversion attacks.",
+      "remediation": "Enforce per-user access filters on every retrieval; authenticate and authorize the vector store; validate memory writes.",
+      "grey_panda_controls": ["SecureContextBuilder"],
+      "scanner_rules": ["GP-AI-009", "GP-AGT-007"]
+    },
+    {
+      "id": "LLM10:2026",
+      "title": "Improper Output Handling",
+      "description": "Model output is passed downstream (HTML, SQL, shell, code) without validation, enabling XSS, SQLi, SSRF, or RCE.",
+      "remediation": "Sanitize output with OutputGuardrail; validate any generated SQL/code against an allowlist; never execute model output directly.",
+      "grey_panda_controls": ["OutputGuardrail"],
+      "scanner_rules": ["GP-AI-004", "GP-AI-014"]
+    }
+  ]
+}
