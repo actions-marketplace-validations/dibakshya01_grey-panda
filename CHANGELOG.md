@@ -4,6 +4,16 @@ All notable changes to Grey Panda are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.7] — 2026-09-30
+
+### Added
+- **`ELI5.md` — a plain-English explainer for non-technical readers & leaders.**
+  What Grey Panda is (a "smoke detector for AI apps"), why it exists, the "is it
+  live?" mental model (it's a local plug-in, not a cloud service), one-line install,
+  honest limits, and leader talking points — no jargon. Linked prominently from the
+  README, and mirrored as a new **ELI5** page + nav tab on the website
+  (`docs/eli5.html`).
+
 ## [1.0.6] — 2026-09-30
 
 MCP server made launch-ready — Grey Panda's in-IDE distribution surface.

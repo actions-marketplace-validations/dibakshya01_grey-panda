@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "grey-panda"
-version = "1.0.6"
+version = "1.0.7"
 description = "The calm guardian for AI, agent, and MCP code — a zero-dependency, standards-anchored AI security toolkit for developers and security reviewers."
 readme = "README.md"
 requires-python = ">=3.9"
@@ -78,6 +78,7 @@ include = [
     "/Module 4 - MCP and Agent Security Kit",
     "/Module 5 - Standards and Governance Kit",
     "/README.md",
+    "/ELI5.md",
     "/LICENSE",
     "/NOTICE",
     "/CHANGELOG.md",

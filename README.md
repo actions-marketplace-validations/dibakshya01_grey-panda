@@ -25,10 +25,15 @@
 </p>
 
 <p align="center">
+  <sub>👋 <b>Not a developer?</b> Start with the <a href="ELI5.md">ELI5 — a plain-English explainer for non-technical readers &amp; leaders</a> (no jargon).</sub>
+</p>
+
+<p align="center">
   <sub><b>Deterministic by design — no LLM in the loop.</b> Same code, same verdict, every run; fully offline, private, and free. Your CI gate never flakes and your source never leaves your machine.</sub>
 </p>
 
 <p align="center">
+  <a href="ELI5.md">ELI5 (non-technical)</a> ·
   <a href="#-quick-start">Quick start</a> ·
   <a href="#-whats-in-the-bundle">The bundle</a> ·
   <a href="#-how-it-works">How it works</a> ·
