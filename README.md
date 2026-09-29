@@ -8,7 +8,7 @@
 
 <p align="center">
   <a href="LICENSE"><img alt="License: Apache-2.0" src="https://img.shields.io/badge/License-Apache%202.0-1c222a?style=for-the-badge&labelColor=1c222a&color=12b886"></a>
-  <a href="pyproject.toml"><img alt="Python 3.10+" src="https://img.shields.io/badge/python-3.10%2B-1c222a?style=for-the-badge&labelColor=1c222a&color=3f4753"></a>
+  <a href="pyproject.toml"><img alt="Python 3.9+" src="https://img.shields.io/badge/python-3.9%2B-1c222a?style=for-the-badge&labelColor=1c222a&color=3f4753"></a>
   <a href="pyproject.toml"><img alt="Zero runtime dependencies" src="https://img.shields.io/badge/runtime%20deps-0-1c222a?style=for-the-badge&labelColor=1c222a&color=12b886"></a>
   <a href="Module%205%20-%20Standards%20and%20Governance%20Kit/mappings"><img alt="OWASP anchored" src="https://img.shields.io/badge/OWASP-LLM·Agentic·AISVS·MCP-1c222a?style=for-the-badge&labelColor=1c222a&color=3f4753"></a>
   <a href="CONTRIBUTING.md"><img alt="PRs welcome" src="https://img.shields.io/badge/PRs-welcome-1c222a?style=for-the-badge&labelColor=1c222a&color=12b886"></a>

@@ -4,6 +4,13 @@ All notable changes to Grey Panda are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1] — 2026-09-29
+
+### Changed
+- **Lowered the Python floor to 3.9+** (from 3.10+). The toolkit is stdlib-only and
+  runs on Python 3.9, so this widens reach to machines on the system Python (e.g.
+  macOS) with no code changes. 3.10–3.13 remain fully supported and recommended.
+
 ## [1.0.0] — 2026-09-29
 
 The first public release. 🐼
@@ -39,4 +46,5 @@ The first public release. 🐼
 - **Examples** — `vulnerable_app` (flagged) vs `secure_app` (clean) and a full SDK tour.
 - **Tests** — 76 zero-dependency `unittest` tests; Grey Panda scans its own repo clean in CI.
 
+[1.0.1]: https://github.com/dibakshya01/grey-panda/releases/tag/v1.0.1
 [1.0.0]: https://github.com/dibakshya01/grey-panda/releases/tag/v1.0.0
