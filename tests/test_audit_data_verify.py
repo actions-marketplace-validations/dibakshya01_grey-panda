@@ -1,11 +1,11 @@
 import json
 import logging
 import unittest
+from pathlib import Path
 
 from greypanda import AuditLogger
-from greypanda.data import all_standards, lookup, control_index
+from greypanda.data import all_standards, control_index, lookup
 from greypanda.verify.aisvs import verify_aisvs
-from pathlib import Path
 
 EXAMPLES = Path(__file__).resolve().parents[1] / "examples"
 
@@ -49,6 +49,7 @@ class TestStandardsData(unittest.TestCase):
         self.assertGreater(len(idx), 50)
 
 
+@unittest.skipUnless(EXAMPLES.exists(), "examples/ not packaged (sdist)")
 class TestVerify(unittest.TestCase):
     def test_vulnerable_app_fails_l2(self):
         report = verify_aisvs(EXAMPLES / "vulnerable_app", level=2)

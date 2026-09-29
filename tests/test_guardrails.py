@@ -1,6 +1,6 @@
 import unittest
 
-from greypanda import PromptGuardrail, OutputGuardrail
+from greypanda import OutputGuardrail, PromptGuardrail
 
 
 class TestPromptGuardrail(unittest.TestCase):

@@ -119,7 +119,7 @@ class Guardian:
         self.policies: list[Policy] = list(policies or [])
         self.default = default
 
-    def add_policy(self, policy: Policy) -> "Guardian":
+    def add_policy(self, policy: Policy) -> Guardian:
         self.policies.append(policy)
         return self
 
@@ -158,7 +158,7 @@ def deny_tools(*tool_names: str, reason: str = "tool is denied by policy") -> Po
     """Deny any call to the named tools."""
     denied = set(tool_names)
 
-    def _policy(ctx: HookContext) -> "HookDecision | None":
+    def _policy(ctx: HookContext) -> HookDecision | None:
         if ctx.tool_name in denied:
             return HookDecision(Disposition.DENY, reasoning=f"{ctx.tool_name}: {reason}")
         return None
@@ -170,7 +170,7 @@ def ask_on_tools(*tool_names: str, reason: str = "requires approval") -> Policy:
     """Route calls to the named (irreversible) tools to a human approver."""
     watched = set(tool_names)
 
-    def _policy(ctx: HookContext) -> "HookDecision | None":
+    def _policy(ctx: HookContext) -> HookDecision | None:
         if ctx.tool_name in watched:
             return HookDecision(Disposition.ASK, reasoning=f"{ctx.tool_name}: {reason}")
         return None
@@ -182,7 +182,7 @@ def allowlist_tools(*tool_names: str) -> Policy:
     """Deny anything not on the allowlist (deny by default)."""
     allowed = set(tool_names)
 
-    def _policy(ctx: HookContext) -> "HookDecision | None":
+    def _policy(ctx: HookContext) -> HookDecision | None:
         if ctx.tool_name and ctx.tool_name not in allowed:
             return HookDecision(
                 Disposition.DENY,

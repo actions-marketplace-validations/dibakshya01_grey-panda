@@ -18,8 +18,8 @@ import time
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from ..data import load_standard
 from .._version import __version__
+from ..data import load_standard
 from ..scanner.engine import AISecurityScanner, Finding
 
 

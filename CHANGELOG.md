@@ -4,6 +4,42 @@ All notable changes to Grey Panda are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.2] — 2026-09-29
+
+Hardening pass in response to an adversarial pre-announcement code review.
+
+### Fixed / changed
+- **`OutputGuardrail` now actually neutralises XSS.** It strips/flags `<script>`,
+  inline event handlers, `javascript:`/`data:` URIs and embed tags (not just
+  external-image URLs), and adds `escape_html=True` for full safety. Every
+  "blocks unsafe HTML" claim in the docs is corrected to describe exactly what it
+  does. **This closes a false-assurance issue** — the previous version claimed HTML
+  protection it did not provide.
+- **`PromptGuardrail` no longer rejects legitimate emoji/Indic text.** ZWJ/ZWNJ are
+  left intact; only genuinely-dangerous invisibles (bidi overrides/isolates, tag
+  chars) are flagged and stripped; benign zero-width chars are stripped silently.
+- **Scanner false positive on the recommended secure pattern fixed.** `suppress`
+  now honours a small multi-line window, so a `redact()` or `max_tokens` on a
+  nearby/wrapped line correctly suppresses `GP-AI-003` / `GP-AI-012`. `secure_app`
+  now *satisfies* the rules with a real client call instead of hiding behind a
+  wrapper.
+- **Lightweight model-taint tracking** catches flagship SQL/exec and HTML sinks fed
+  from a model call even when the variable isn't named with a trigger keyword.
+- **`SecureContextBuilder` hardened:** per-call nonce fence delimiters, breakout
+  tokens stripped, and untrusted content placed under the `user` role (never
+  `system`).
+- **`.greypanda.toml` is now read** by `gp scan` (profile / fail_on).
+- **Self-scan hardened:** `guardrails.py` and `mcp.py` are scanned (line-level
+  ignores on signature lines only) instead of whole-file excluded.
+- **DLP:** IPv4 moved to an opt-in `network` category; SSN/card/national-ID matches
+  are fully masked in reports.
+- **SARIF:** fixed the 404 `helpUri` and emit repo-relative URIs with `uriBaseId`.
+- **Metadata honesty:** Development Status → Beta; real maintainer handle in
+  `authors` and `CODEOWNERS`.
+- **Packaging:** `examples/` (with intentional fake secrets) excluded from the
+  sdist so `pip download` doesn't trip consumers' secret scanners.
+- **CI:** type-checking is a visibly-advisory step rather than masked by `|| true`.
+
 ## [1.0.1] — 2026-09-29
 
 ### Changed
@@ -46,5 +82,6 @@ The first public release. 🐼
 - **Examples** — `vulnerable_app` (flagged) vs `secure_app` (clean) and a full SDK tour.
 - **Tests** — 76 zero-dependency `unittest` tests; Grey Panda scans its own repo clean in CI.
 
+[1.0.2]: https://github.com/dibakshya01/grey-panda/releases/tag/v1.0.2
 [1.0.1]: https://github.com/dibakshya01/grey-panda/releases/tag/v1.0.1
 [1.0.0]: https://github.com/dibakshya01/grey-panda/releases/tag/v1.0.0

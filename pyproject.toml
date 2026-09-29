@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "grey-panda"
-version = "1.0.1"
+version = "1.0.2"
 description = "The calm guardian for AI, agent, and MCP code — a zero-dependency, standards-anchored AI security toolkit for developers and security reviewers."
 readme = "README.md"
 requires-python = ">=3.9"
@@ -15,10 +15,10 @@ keywords = [
     "model-context-protocol", "agentic", "aisvs", "dlp", "sast", "guardrails",
     "appsec", "sarif", "agent-security",
 ]
-authors = [{ name = "Grey Panda contributors" }]
-maintainers = [{ name = "Grey Panda contributors" }]
+authors = [{ name = "dibakshya01" }]
+maintainers = [{ name = "dibakshya01" }]
 classifiers = [
-    "Development Status :: 5 - Production/Stable",
+    "Development Status :: 4 - Beta",
     "Environment :: Console",
     "Intended Audience :: Developers",
     "Intended Audience :: Information Technology",
@@ -61,15 +61,15 @@ packages = ["src/greypanda"]
 "src/greypanda/data/AI_SECURITY_CHECKLIST.md" = "greypanda/data/AI_SECURITY_CHECKLIST.md"
 
 [tool.hatch.build.targets.sdist]
-# README images are served from raw.githubusercontent.com, so the heavy
-# docs/assets media is intentionally excluded from the sdist to keep it lean.
-exclude = ["/docs/assets"]
+# docs/assets media is served from raw.githubusercontent.com (keeps the sdist
+# lean). examples/ ship intentional fake secrets + pickle/shell demos that would
+# trip consumers' secret scanners on `pip download`, so they are repo-only.
+exclude = ["/docs/assets", "/examples"]
 include = [
     "/src",
     "/docs",
     "/standards",
     "/skill",
-    "/examples",
     "/tests",
     "/tools",
     "/Module 1 - Developer Kit",

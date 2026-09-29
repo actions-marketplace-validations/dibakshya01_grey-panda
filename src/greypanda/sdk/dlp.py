@@ -30,7 +30,7 @@ logger = logging.getLogger("greypanda.dlp")
 _Pattern = tuple[str, "re.Pattern[str]"]
 
 
-def _c(pattern: str, flags: int = 0) -> "re.Pattern[str]":
+def _c(pattern: str, flags: int = 0) -> re.Pattern[str]:
     return re.compile(pattern, flags)
 
 
@@ -45,6 +45,10 @@ _BUILTIN: dict[str, list[_Pattern]] = {
         ("credit_card", _c(r"\b(?:\d[ -]?){13,19}\b")),
         ("us_ssn", _c(r"\b\d{3}-\d{2}-\d{4}\b")),
         ("phone", _c(r"\b(?:\+?\d{1,3}[ -]?)?(?:\(?\d{3}\)?[ -]?)\d{3}[ -]?\d{4}\b")),
+    ],
+    # IPv4 is high-false-positive (versions, ids, timestamps look alike) and is
+    # not always PII — opt in with categories=["pii", "network"].
+    "network": [
         ("ipv4", _c(r"\b(?:(?:25[0-5]|2[0-4]\d|1?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|1?\d?\d)\b")),
     ],
     "secrets": [
@@ -113,12 +117,20 @@ class DLPResult:
     redacted_text: str = ""
 
 
-def mask(value: str) -> str:
-    """Mask a sensitive value: first 3 + ***** + last 3. Never log the raw value."""
+# Highly-sensitive identifiers are masked completely (no leading/trailing reveal).
+_FULL_MASK = {"credit_card", "us_ssn", "ssn", "aadhaar", "pan", "iban"}
+
+
+def mask(value: str, reveal: int = 2) -> str:
+    """Mask a sensitive value, revealing at most ``reveal`` trailing characters.
+
+    ``reveal=0`` masks completely. Never returns the raw value. Highly-sensitive
+    identifiers (cards, SSNs, national IDs) are masked completely by the scanner.
+    """
     v = value.strip()
-    if len(v) <= 6:
-        return "*" * len(v)
-    return f"{v[:3]}*****{v[-3:]}"
+    if reveal <= 0 or len(v) <= reveal:
+        return "*" * max(1, len(v))
+    return "*" * (len(v) - reveal) + v[-reveal:]
 
 
 class DLPScanner:
@@ -126,7 +138,8 @@ class DLPScanner:
 
     Args:
         categories: Which built-in categories to enable. Defaults to
-            ``("pii", "secrets")``. Options also include ``"regional_in"``,
+            ``("pii", "secrets")``. Options also include ``"network"`` (IPv4,
+            opt-in as it is high-false-positive), ``"regional_in"``,
             ``"regional_eu"`` and ``"org_pii"``.
         custom_patterns: Extra patterns as ``{category: [(name, regex), ...]}``.
         on_violation: Optional callback invoked with the :class:`DLPResult` when a
@@ -140,7 +153,7 @@ class DLPScanner:
         on_violation: Callable[[DLPResult], None] | None = None,
     ) -> None:
         cats = list(categories) if categories is not None else list(_DEFAULT_CATEGORIES)
-        self._patterns: list[tuple[str, str, "re.Pattern[str]"]] = []
+        self._patterns: list[tuple[str, str, re.Pattern[str]]] = []
         for cat in cats:
             for name, rx in _BUILTIN.get(cat, []):
                 self._patterns.append((cat, name, rx))
@@ -158,7 +171,8 @@ class DLPScanner:
                 value = m.group(0)
                 if name == "credit_card" and not _luhn_ok(value):
                     continue  # reduce false positives on random digit runs
-                matches.append(DLPMatch(category=cat, pattern_name=name, masked_snippet=mask(value)))
+                snippet = mask(value, reveal=0 if name in _FULL_MASK else 2)
+                matches.append(DLPMatch(category=cat, pattern_name=name, masked_snippet=snippet))
                 redacted = redacted.replace(value, f"[REDACTED:{name}]")
 
         clean = not matches

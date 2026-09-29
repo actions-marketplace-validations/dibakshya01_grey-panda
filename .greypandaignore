@@ -8,10 +8,12 @@
 # vulnerable. Excluding a scanner's own rule definitions and test fixtures is
 # standard practice.
 
-# Detection-signature definitions (they hold the very patterns they detect):
+# The scanner rule catalog is nothing but detection signatures — scanning it for
+# its own patterns is circular. The SDK files (guardrails.py, mcp.py) are NOT
+# excluded: they hold real runtime logic and are scanned, with line-level
+# `# grey-panda: ignore` on the few signature-definition lines only, so a genuine
+# vulnerability introduced into them WOULD be caught by the gate.
 src/greypanda/scanner/rules.py
-src/greypanda/sdk/guardrails.py
-src/greypanda/sdk/mcp.py
 
 # The machine-readable standards pack (risk descriptions contain attack terms):
 src/greypanda/data/standards/*

@@ -22,8 +22,8 @@ from pathlib import Path
 
 from .._version import __version__
 from ..scanner.engine import AISecurityScanner, exceeds_threshold, severity_counts
-from ..scanner.reporters import report_json, report_markdown, report_sarif
 from ..scanner.profiles import DEFAULT_PROFILE, PROFILES, get_profile
+from ..scanner.reporters import report_json, report_markdown, report_sarif
 
 PANDA = "🐼"
 
@@ -32,29 +32,59 @@ def _print(msg: str = "") -> None:
     sys.stdout.write(msg + "\n")
 
 
+def _load_config(root: Path) -> dict:
+    """Read a ``.greypanda.toml`` (a tiny key = value subset; no tomllib on 3.9).
+
+    Looked up in the scan root, then the current directory. Recognised keys:
+    ``profile``, ``fail_on``, ``paths``.
+    """
+    import re as _re
+
+    base = root if root.is_dir() else root.parent
+    for cand in (base / ".greypanda.toml", Path.cwd() / ".greypanda.toml"):
+        if cand.is_file():
+            cfg: dict = {}
+            for line in cand.read_text(encoding="utf-8", errors="ignore").splitlines():
+                line = line.split("#", 1)[0].strip()
+                m = _re.match(r"([A-Za-z_]+)\s*=\s*(.+)", line)
+                if not m:
+                    continue
+                key, val = m.group(1), m.group(2).strip()
+                if val[:1] in "\"'":
+                    cfg[key] = val.strip("\"'")
+                elif val.startswith("["):
+                    cfg[key] = [v.strip().strip("\"'") for v in val.strip("[]").split(",") if v.strip()]
+                else:
+                    cfg[key] = val
+            return cfg
+    return {}
+
+
 # --------------------------------------------------------------------------- #
 # scan
 # --------------------------------------------------------------------------- #
 def cmd_scan(args: argparse.Namespace) -> int:
-    profile = get_profile(args.profile)
-    fail_on = (args.fail_on or profile.default_fail_on).upper()
-    scanner = AISecurityScanner(profile=args.profile)
+    config = _load_config(Path(args.path))
+    profile_name = args.profile or config.get("profile") or DEFAULT_PROFILE
+    profile = get_profile(profile_name)
+    fail_on = (args.fail_on or config.get("fail_on") or profile.default_fail_on).upper()
+    scanner = AISecurityScanner(profile=profile_name)
 
     start = time.time()
     findings = scanner.scan_path(Path(args.path))
     elapsed = time.time() - start
 
     if args.format == "json":
-        out = report_json(findings, args.path, elapsed, args.profile)
+        out = report_json(findings, args.path, elapsed, profile_name)
     elif args.format == "sarif":
-        out = report_sarif(findings, args.path, elapsed, args.profile)
+        out = report_sarif(findings, args.path, elapsed, profile_name)
     else:
-        out = report_markdown(findings, args.path, elapsed, args.profile)
+        out = report_markdown(findings, args.path, elapsed, profile_name)
 
     if args.output:
         Path(args.output).write_text(out, encoding="utf-8")
         counts = severity_counts(findings)
-        _print(f"{PANDA} Grey Panda scanned '{args.path}' [{args.profile}] in {elapsed:.2f}s")
+        _print(f"{PANDA} Grey Panda scanned '{args.path}' [{profile_name}] in {elapsed:.2f}s")
         _print(f"   {counts['CRITICAL']} critical · {counts['HIGH']} high · "
                f"{counts['MEDIUM']} medium · {counts['LOW']} low → {args.output}")
     else:
@@ -151,7 +181,8 @@ def cmd_init(args: argparse.Namespace) -> int:
 # verify
 # --------------------------------------------------------------------------- #
 def cmd_verify(args: argparse.Namespace) -> int:
-    from ..verify.aisvs import verify_aisvs, report_markdown as verify_md
+    from ..verify.aisvs import report_markdown as verify_md
+    from ..verify.aisvs import verify_aisvs
 
     report = verify_aisvs(args.path, level=args.level, profile=args.profile)
     if args.format == "json":
@@ -288,7 +319,8 @@ def build_parser() -> argparse.ArgumentParser:
     # scan
     s = sub.add_parser("scan", help="Scan code for AI/agent/MCP security issues.")
     s.add_argument("path", nargs="?", default=".", help="File or directory (default: .)")
-    s.add_argument("--profile", choices=list(PROFILES), default=DEFAULT_PROFILE)
+    s.add_argument("--profile", choices=list(PROFILES), default=None,
+                   help="Override the profile (default: .greypanda.toml, else 'team').")
     s.add_argument("--format", choices=["markdown", "json", "sarif"], default="markdown")
     s.add_argument("--output", "-o", help="Write report to a file instead of stdout.")
     s.add_argument("--fail-on", choices=["CRITICAL", "HIGH", "MEDIUM", "LOW"],

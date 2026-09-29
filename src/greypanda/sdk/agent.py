@@ -122,7 +122,7 @@ class AgentSecurityWrapper:
         self._active = False
         logger.critical("KILL SWITCH ACTIVATED for agent %s", self.agent_id)
 
-    def session(self, user_id: str, session_id: str) -> "AgentSession":
+    def session(self, user_id: str, session_id: str) -> AgentSession:
         """Start a security-scoped session. Raises if the agent has been killed."""
         if not self._active:
             raise AgentSecurityViolation(
@@ -156,7 +156,7 @@ class AgentSession:
         self.session_id = session_id
         self._call_counts: dict[str, int] = {}
 
-    def __enter__(self) -> "AgentSession":
+    def __enter__(self) -> AgentSession:
         return self
 
     def __exit__(self, exc_type: Any, exc: Any, tb: Any) -> None:

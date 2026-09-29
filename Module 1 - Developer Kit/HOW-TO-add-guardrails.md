@@ -10,7 +10,7 @@
 3. SecureContextBuilder            # tag trust per segment, enforce a size budget
 4. (your LLM call)                 # unchanged
 5. DLPScanner.redact()             # scan the response for leaked PII
-6. OutputGuardrail.sanitize()      # block exfil image URLs / unsafe HTML
+6. OutputGuardrail.sanitize()      # neutralise XSS + exfil image URLs (escape_html=True for full safety)
 7. AuditLogger                     # structured event, zero raw text, SIEM-ready
 ```
 

@@ -36,7 +36,7 @@ guard, dlp, out = PromptGuardrail(), DLPScanner(), OutputGuardrail()
 safe   = guard.assert_safe(user_input)        # block known injection + strip invisible Unicode
 clean  = dlp.redact(safe)                       # remove PII & secrets before the model sees them
 reply  = call_your_llm(clean)                   # ← your existing call, unchanged
-answer = out.sanitize(reply).sanitized_text     # block data-exfil URLs & unsafe HTML
+answer = out.sanitize(reply).sanitized_text     # neutralise XSS constructs + exfil URLs (escape_html=True to fully escape)
 ```
 
 ## The SDK at a glance

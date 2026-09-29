@@ -37,19 +37,20 @@ class Rule:
     description: str
     remediation: str
     pattern: str | None = None
-    suppress: str | None = None  # if this matches the same line, skip (guard)
+    suppress: str | None = None  # if this matches, skip (guard against false positives)
+    suppress_window: int = 0     # also check the suppressor N lines above/below the match
     file_globs: tuple[str, ...] = ("*.py",)
     sdk: str = ""  # e.g. "from greypanda import DLPScanner"
     profiles: tuple[str, ...] = ALL_PROFILES
-    _rx: "re.Pattern[str] | None" = field(default=None, repr=False, compare=False)
-    _sup: "re.Pattern[str] | None" = field(default=None, repr=False, compare=False)
+    _rx: re.Pattern[str] | None = field(default=None, repr=False, compare=False)
+    _sup: re.Pattern[str] | None = field(default=None, repr=False, compare=False)
 
-    def compiled(self) -> "re.Pattern[str] | None":
+    def compiled(self) -> re.Pattern[str] | None:
         if self.pattern and self._rx is None:
             self._rx = re.compile(self.pattern)
         return self._rx
 
-    def suppressor(self) -> "re.Pattern[str] | None":
+    def suppressor(self) -> re.Pattern[str] | None:
         if self.suppress and self._sup is None:
             self._sup = re.compile(self.suppress)
         return self._sup
@@ -107,7 +108,8 @@ RULES: list[Rule] = [
                     "secrets, risking sensitive-data leakage to the provider/logs.",
         remediation="Run DLPScanner().redact(text) on inputs (and outputs) before the call.",
         pattern=r"""(?ix)\b(?:openai|anthropic|client|llm|bedrock|litellm|genai)\b[^\n]*?\.(?:chat|complete|completions|invoke|generate|messages)\b""",
-        suppress=r"DLPScanner|\.redact\(|\.scan\(",
+        suppress=r"DLPScanner|\.redact\(|\.scan\(|assert_clean\(",
+        suppress_window=8,
         sdk="from greypanda import DLPScanner",
         profiles=("team", "enterprise"),
     ),
@@ -193,6 +195,7 @@ RULES: list[Rule] = [
         remediation="Set max_tokens on the call and add per-user rate limiting.",
         pattern=r"""(?ix)\.(?:create|chat|complete|completions|invoke|generate)\s*\(""",
         suppress=r"max_tokens|max_output_tokens|max_completion_tokens",
+        suppress_window=6,
         sdk="",
         profiles=("enterprise",),
     ),
@@ -222,6 +225,7 @@ RULES: list[Rule] = [
                     "to retrieval calls.",
         pattern=r"""(?ix)\.(?:similarity_search(?:_with_score)?|max_marginal_relevance_search|as_retriever|get_relevant_documents|mmr_search)\s*\(""",
         suppress=r"filter\s*=|where\s*=|user_id|namespace\s*=|scope\s*=|accessible_by",
+        suppress_window=4,
         sdk="",
         profiles=("team", "enterprise"),
     ),

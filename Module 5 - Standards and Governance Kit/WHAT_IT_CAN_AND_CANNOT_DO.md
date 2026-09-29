@@ -14,7 +14,7 @@ Security tools earn trust by being honest about their limits. This document list
 | Block known injection phrasings | `PromptGuardrail` baseline + your `extra_patterns` | **High** |
 | Strip invisible / bidi / tag Unicode (Trojan Source, ASCII smuggling) | Unicode range stripping + NFKC normalisation | **High** |
 | Enforce input size limits | length guard | **High** |
-| Separate instructions from untrusted data | `SecureContextBuilder` trust tagging | **High** (structural) |
+| Separate instructions from untrusted data | `SecureContextBuilder` nonce-fenced trust tagging (untrusted content under the `user` role) | **Medium–High** (structural; a single-prompt fence is defence-in-depth, not a guarantee) |
 | Catch novel/paraphrased injection | pattern matching | **Low** — see CANNOT |
 
 ### Data loss prevention
@@ -61,6 +61,8 @@ Security tools earn trust by being honest about their limits. This document list
 - **Cannot detect novel / zero-day injection techniques.** New encodings and phrasings pass regex.
 
 ### SDK limitations
+- **`OutputGuardrail` is NOT a complete HTML sanitiser.** It neutralises and flags the common XSS constructs (`<script>`, inline `on*=` event handlers, `javascript:`/`data:` URIs, and embed tags) plus external-image exfil URLs — but crafted markup can still get past it. **If you render untrusted model output as HTML, set `escape_html=True`** (returns `html.escape`-d text) or use a vetted sanitiser (bleach / DOMPurify). Do not rely on the default mode as XSS-safe HTML.
+- **Trust-tagging fences are defence-in-depth, not a hard boundary.** `SecureContextBuilder` uses a per-call nonce delimiter, strips breakout tokens, and places untrusted content under the `user` role (never `system`) — but a capable model can still be talked past a single-prompt boundary.
 - **`PromptGuardrail` cannot detect semantically-equivalent injections** (paraphrasing bypasses).
 - **DLP regex is language- and format-specific** — cross-lingual or unusually-formatted PII can slip through.
 - **`AgentSecurityWrapper` does not execute tools** — it validates; your caller must respect the approved result and actually enforce it.
@@ -73,7 +75,7 @@ Security tools earn trust by being honest about their limits. This document list
 - **Python-centric** — JavaScript/TypeScript, Java, Go, and others are covered only partially (secrets, HTTP, output-rendering patterns) or not at all.
 - **False positives** on benign code that matches trigger keywords.
 - **False negatives** on obfuscated or dynamically-constructed patterns (split strings, `getattr`, string building).
-- **No taint tracking** — it does not follow data across function calls.
+- **Only lightweight taint tracking** — a small within-file pass follows model-tainted variables into the highest-impact sinks (SQL/exec and HTML), but it is not full data-flow analysis and does not follow data across function calls.
 
 ### MCP / ACS limitations
 - **Tool-poisoning marker detection is heuristic** — it catches known-bad phrasing, not cleverly disguised instructions.

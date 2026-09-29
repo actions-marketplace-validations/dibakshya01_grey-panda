@@ -1,6 +1,6 @@
-# Grey Panda code owners. Replace with real GitHub handles once the repo is live.
-# * @your-handle
+# Grey Panda code owners.
+* @dibakshya01
 
-# Scanner rules and SDK controls benefit from a security-minded review.
-# /src/greypanda/scanner/  @your-security-handle
-# /src/greypanda/sdk/      @your-security-handle
+# Scanner rules and SDK controls get a security-minded review.
+/src/greypanda/scanner/  @dibakshya01
+/src/greypanda/sdk/      @dibakshya01

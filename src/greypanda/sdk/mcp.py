@@ -45,11 +45,11 @@ _POISON_MARKERS = (
     r"disregard\s+(?:your\s+)?(?:system\s+prompt|instructions)",
     r"do\s+not\s+(?:tell|inform|mention\s+to)\s+the\s+user",
     r"</?\s*(?:system|instructions?)\s*>",
-    r"\bexfiltrat",
+    r"\bexfiltrat",  # grey-panda: ignore (poison-marker signature)
     r"send\s+(?:the\s+)?[\w./]*\s*(?:contents?|data|secret|token|file|\.env)s?\s+to\b",
     r"\bsend\s+the\s+\.env\b",
     r"base64",
-    r"(?:read|cat|exfiltrate|leak)\s+(?:the\s+)?(?:\.env|/etc/passwd|ssh\s+keys?|credentials?|secrets?)\b",
+    r"(?:read|cat|exfiltrate|leak)\s+(?:the\s+)?(?:\.env|/etc/passwd|ssh\s+keys?|credentials?|secrets?)\b",  # grey-panda: ignore (poison-marker signature)
     r"<!--.*?-->",
 )
 _POISON_RE = [re.compile(p, re.IGNORECASE | re.DOTALL) for p in _POISON_MARKERS]

@@ -1,8 +1,8 @@
 import unittest
 
 from greypanda import (
-    AgentSecurityWrapper,
     AgentSecurityViolation,
+    AgentSecurityWrapper,
     ToolPermission,
 )
 

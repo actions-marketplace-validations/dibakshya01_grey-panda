@@ -32,6 +32,7 @@ class TestRules(unittest.TestCase):
         self.assertGreater(len(enterprise), len(solo))
 
 
+@unittest.skipUnless(EXAMPLES.exists(), "examples/ not packaged (sdist)")
 class TestScannerOnExamples(unittest.TestCase):
     def test_vulnerable_app_has_criticals(self):
         s = AISecurityScanner(profile="enterprise")
@@ -55,6 +56,7 @@ class TestScannerOnExamples(unittest.TestCase):
         self.assertEqual(order, sorted(order))
 
 
+@unittest.skipUnless(EXAMPLES.exists(), "examples/ not packaged (sdist)")
 class TestReporters(unittest.TestCase):
     def setUp(self):
         self.s = AISecurityScanner(profile="enterprise")

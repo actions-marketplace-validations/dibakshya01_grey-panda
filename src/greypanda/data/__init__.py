@@ -9,8 +9,8 @@ as JSON (stdlib-loadable, zero dependency).
 from __future__ import annotations
 
 import json
+from functools import cache
 from importlib import resources
-from functools import lru_cache
 from typing import Any
 
 _STANDARDS = {
@@ -23,7 +23,7 @@ _STANDARDS = {
 }
 
 
-@lru_cache(maxsize=None)
+@cache
 def load_standard(key: str) -> dict[str, Any]:
     """Load one standard document from the packaged pack by key."""
     if key not in _STANDARDS:
@@ -38,7 +38,7 @@ def all_standards() -> dict[str, dict[str, Any]]:
     return {key: load_standard(key) for key in _STANDARDS}
 
 
-@lru_cache(maxsize=None)
+@cache
 def control_index() -> dict[str, dict[str, Any]]:
     """A flat ``{control_id: entry}`` index across every standard, for fast lookup."""
     index: dict[str, dict[str, Any]] = {}

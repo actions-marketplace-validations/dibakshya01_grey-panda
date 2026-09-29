@@ -103,7 +103,7 @@ def report_sarif(findings: list[Finding], scan_path: str, elapsed: float, profil
             "name": r.title.replace(" ", ""),
             "shortDescription": {"text": r.title},
             "fullDescription": {"text": r.description},
-            "helpUri": "https://github.com/dibakshya01/grey-panda/blob/main/the standards mappings",
+            "helpUri": "https://github.com/dibakshya01/grey-panda/blob/main/Module%203%20-%20Scanner%20and%20CI-CD%20Kit/RULES_CATALOG.md",
             "help": {"text": f"{r.remediation} (OWASP {r.owasp_id})"},
             "defaultConfiguration": {"level": _SARIF_LEVEL.get(r.severity, "warning")},
             "properties": {"security-severity": _security_severity(r.severity), "owasp": r.owasp_id},
@@ -117,7 +117,7 @@ def report_sarif(findings: list[Finding], scan_path: str, elapsed: float, profil
             "message": {"text": f"{f.title} — {f.remediation} (OWASP {f.owasp_id})"},
             "locations": [{
                 "physicalLocation": {
-                    "artifactLocation": {"uri": _uri(f.file)},
+                    "artifactLocation": {"uri": _uri(f.file), "uriBaseId": "SRCROOT"},
                     "region": {"startLine": max(1, f.line), "snippet": {"text": f.snippet}},
                 }
             }],
@@ -134,10 +134,21 @@ def report_sarif(findings: list[Finding], scan_path: str, elapsed: float, profil
                 "version": __version__,
                 "rules": list(seen.values()),
             }},
+            "originalUriBaseIds": {"SRCROOT": {"uri": _root_uri()}},
             "results": results,
         }],
     }
     return json.dumps(sarif, indent=2)
+
+
+def _root_uri() -> str:
+    import os
+    from pathlib import Path
+
+    try:
+        return Path(os.getcwd()).as_uri().rstrip("/") + "/"
+    except Exception:
+        return "file:///"
 
 
 def _security_severity(severity: str) -> str:
@@ -146,4 +157,14 @@ def _security_severity(severity: str) -> str:
 
 
 def _uri(path: str) -> str:
-    return path.replace("\\", "/")
+    """Repo-relative, forward-slashed path (relative to SRCROOT = the run's cwd)."""
+    import os
+
+    p = path.replace("\\", "/")
+    try:
+        rel = os.path.relpath(path, os.getcwd()).replace("\\", "/")
+        if not rel.startswith(".."):
+            return rel
+    except Exception:
+        pass
+    return os.path.basename(p)
