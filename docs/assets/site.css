@@ -133,7 +133,7 @@ section.alt .st{background:var(--paper);}
 @media(max-width:860px){.aud{grid-template-columns:1fr;}}
 .col{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:28px;}
 section.alt .col{background:var(--paper);}
-.col.feature{background:var(--ink);border-color:#242c36;color:#fff;}
+.col.feature,section.alt .col.feature{background:var(--ink);border-color:#242c36;color:#fff;}
 .col .p{font-family:'JetBrains Mono';font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--jade-d);font-weight:700;}
 .col h3{font-family:'Space Grotesk';font-size:24px;margin:8px 0 3px;}
 .col .who{font-size:14px;color:var(--slate);margin-bottom:16px;}
