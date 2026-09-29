@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Architecture — Grey Panda</title>
+<meta name="description" content="Grey Panda architecture: one zero-dependency engine, five module kits, a 7-step runtime pipeline, and clear trust boundaries — with diagrams.">
+<link rel="icon" href="assets/logo.svg">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add("js");</script>
+<link rel="stylesheet" href="assets/site.css">
+<style>
+  svg text{font-family:'Space Grotesk',sans-serif;}
+  svg .m{font-family:'JetBrains Mono',monospace;}
+</style>
+</head>
+<body>
+
+<nav><div class="wrap">
+  <a class="brand" href="index.html"><img src="assets/logo.svg" alt=""> Grey Panda</a>
+  <button class="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+  <div class="tabs">
+    <a href="index.html">Home</a>
+    <a href="docs.html">Docs</a>
+    <a href="architecture.html" class="active">Architecture</a>
+    <a href="contact.html">Contact</a>
+    <a class="gh" href="https://github.com/dibakshya01/grey-panda">GitHub ★</a>
+  </div>
+</div></nav>
+
+<header class="hero page">
+  <div class="grid"></div>
+  <div class="wrap">
+    <div class="kicker reveal">Architecture</div>
+    <h1 class="disp reveal d1">One engine. Five kits.<br>Defense in depth.</h1>
+    <p class="lede reveal d2">Grey Panda is built on four principles and implemented as a single, tested, zero-dependency engine that every surface — CLI, IDE, CI, and the module kits — shares. Here's how the pieces fit.</p>
+  </div>
+</header>
+
+<!-- ============ PRINCIPLES ============ -->
+<section>
+  <div class="wrap">
+    <div class="head reveal">
+      <div class="kicker">Principles</div>
+      <h2 class="disp">Five ideas, held as constraints</h2>
+    </div>
+    <div class="reveal d1" style="margin-top:20px;">
+      <div class="principle"><div class="num">1</div><div><h4>Secure path = easy path</h4><p>Every control is a drop-in. Adding the core guardrails to an existing LLM call takes under two minutes and never requires rewriting the call.</p></div></div>
+      <div class="principle"><div class="num">2</div><div><h4>Honest about limits</h4><p>Every capability ships with a confidence level and a failure condition. A tool that's honest about what it can't do is one you can trust.</p></div></div>
+      <div class="principle"><div class="num">3</div><div><h4>Defense in depth, not prevention theatre</h4><p>No single layer stops everything. Known patterns are blocked at input; data is quarantined even if injection succeeds; blast radius is limited by least-privilege agents; every action is auditable.</p></div></div>
+      <div class="principle"><div class="num">4</div><div><h4>Standards-anchored, not opinion-driven</h4><p>Every rule, checklist item, and SDK control cites a specific OWASP / AISVS / ACS ID. No bare assertions.</p></div></div>
+      <div class="principle"><div class="num">5</div><div><h4>Works for one dev or ten thousand</h4><p>Profiles scale the process, not the safety floor. A solo dev and an enterprise get the same protection, sized differently.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ DIAGRAM A — ONE ENGINE ============ -->
+<section class="alt">
+  <div class="wrap">
+    <div class="head reveal">
+      <div class="kicker">System</div>
+      <h2 class="disp">One engine, many front doors</h2>
+      <p>A single knowledge pack feeds one engine; the engine powers every surface and every module kit. No duplication, no drift.</p>
+    </div>
+    <div class="diagram reveal d1">
+      <svg viewBox="0 0 940 540" width="940" role="img" aria-label="Component architecture: standards pack feeds one engine that powers the surfaces and module kits">
+        <defs><marker id="arA" markerWidth="9" markerHeight="9" refX="5.5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#8a94a3"/></marker></defs>
+        <!-- standards band -->
+        <rect x="90" y="16" width="760" height="74" rx="14" fill="#e7f7f0" stroke="#12b886" stroke-width="1.4"/>
+        <text x="470" y="45" text-anchor="middle" font-size="17" font-weight="700" fill="#0c9b73">STANDARDS KNOWLEDGE PACK</text>
+        <text x="470" y="70" text-anchor="middle" font-size="12.5" fill="#3f4753" class="m">OWASP LLM · DSGAI · Agentic · AISVS · MCP · Agent Control Standard</text>
+        <text x="866" y="56" text-anchor="end" font-size="10.5" class="m" fill="#0c9b73" transform="rotate(0)">›</text>
+        <line x1="470" y1="90" x2="470" y2="116" stroke="#8a94a3" stroke-width="1.6" marker-end="url(#arA)"/>
+        <text x="486" y="108" font-size="11" fill="#8a94a3" class="m">single source of truth</text>
+        <!-- engine -->
+        <rect x="118" y="120" width="704" height="132" rx="16" fill="#ffffff" stroke="#14181d" stroke-width="1.6"/>
+        <text x="138" y="146" font-size="13.5" font-weight="700" fill="#14181d">ENGINE · <tspan class="m" font-weight="400">src/greypanda</tspan> · zero dependencies</text>
+        <g font-size="14" font-weight="600" fill="#14181d">
+          <rect x="138" y="160" width="156" height="72" rx="11" fill="#f4f6f9" stroke="#dbe2ea"/><text x="216" y="192" text-anchor="middle">Scanner</text><text x="216" y="212" text-anchor="middle" font-size="11" font-weight="400" fill="#8a94a3" class="m">26 rules</text>
+          <rect x="306" y="160" width="156" height="72" rx="11" fill="#f4f6f9" stroke="#dbe2ea"/><text x="384" y="192" text-anchor="middle">SDK</text><text x="384" y="212" text-anchor="middle" font-size="11" font-weight="400" fill="#8a94a3" class="m">7 controls</text>
+          <rect x="474" y="160" width="156" height="72" rx="11" fill="#f4f6f9" stroke="#dbe2ea"/><text x="552" y="192" text-anchor="middle">Verify</text><text x="552" y="212" text-anchor="middle" font-size="11" font-weight="400" fill="#8a94a3" class="m">AISVS L1–L3</text>
+          <rect x="642" y="160" width="156" height="72" rx="11" fill="#f4f6f9" stroke="#dbe2ea"/><text x="720" y="192" text-anchor="middle">MCP server</text><text x="720" y="212" text-anchor="middle" font-size="11" font-weight="400" fill="#8a94a3" class="m">stdio JSON-RPC</text>
+        </g>
+        <line x1="470" y1="252" x2="470" y2="278" stroke="#8a94a3" stroke-width="1.6" marker-end="url(#arA)"/>
+        <!-- surfaces -->
+        <text x="90" y="300" font-size="12" font-weight="700" fill="#8a94a3" class="m">SURFACES</text>
+        <g font-size="13.5" font-weight="600" fill="#14181d">
+          <rect x="110" y="312" width="165" height="48" rx="10" fill="#fff" stroke="#dbe2ea"/><text x="192" y="341" text-anchor="middle">CLI · gp</text>
+          <rect x="295" y="312" width="165" height="48" rx="10" fill="#fff" stroke="#dbe2ea"/><text x="377" y="341" text-anchor="middle">MCP server</text>
+          <rect x="480" y="312" width="165" height="48" rx="10" fill="#fff" stroke="#dbe2ea"/><text x="562" y="341" text-anchor="middle">GitHub Action</text>
+          <rect x="665" y="312" width="165" height="48" rx="10" fill="#fff" stroke="#dbe2ea"/><text x="747" y="341" text-anchor="middle">IDE skill</text>
+        </g>
+        <line x1="470" y1="360" x2="470" y2="386" stroke="#8a94a3" stroke-width="1.6" marker-end="url(#arA)"/>
+        <!-- kits -->
+        <text x="90" y="408" font-size="12" font-weight="700" fill="#8a94a3" class="m">MODULE KITS</text>
+        <g font-size="12.5" font-weight="600" fill="#0c9b73">
+          <rect x="90" y="420" width="143" height="52" rx="10" fill="#e7f7f0" stroke="#12b886"/><text x="161" y="444" text-anchor="middle" fill="#14181d">🧰 Developer</text><text x="161" y="461" text-anchor="middle" font-size="10.5" class="m">Module 1</text>
+          <rect x="245" y="420" width="143" height="52" rx="10" fill="#e7f7f0" stroke="#12b886"/><text x="316" y="444" text-anchor="middle" fill="#14181d">🛡️ Reviewer</text><text x="316" y="461" text-anchor="middle" font-size="10.5" class="m">Module 2</text>
+          <rect x="400" y="420" width="143" height="52" rx="10" fill="#e7f7f0" stroke="#12b886"/><text x="471" y="444" text-anchor="middle" fill="#14181d">🔍 Scanner/CI</text><text x="471" y="461" text-anchor="middle" font-size="10.5" class="m">Module 3</text>
+          <rect x="555" y="420" width="143" height="52" rx="10" fill="#e7f7f0" stroke="#12b886"/><text x="626" y="444" text-anchor="middle" fill="#14181d">🤖 MCP/Agent</text><text x="626" y="461" text-anchor="middle" font-size="10.5" class="m">Module 4</text>
+          <rect x="710" y="420" width="143" height="52" rx="10" fill="#e7f7f0" stroke="#12b886"/><text x="781" y="444" text-anchor="middle" fill="#14181d">📚 Standards</text><text x="781" y="461" text-anchor="middle" font-size="10.5" class="m">Module 5</text>
+        </g>
+      </svg>
+      <div class="dcap">The scanner, SDK, <code>gp verify</code>, the MCP server, and the AI skill all cite from one machine-readable standards pack.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ DIAGRAM B — PIPELINE ============ -->
+<section>
+  <div class="wrap">
+    <div class="head reveal">
+      <div class="kicker">Runtime</div>
+      <h2 class="disp">The 7-step request pipeline</h2>
+      <p>Grey Panda wraps your existing LLM call. Untrusted input is screened and redacted on the way in; the response is scanned and neutralised on the way out; every decision is audited without logging raw text.</p>
+    </div>
+    <div class="diagram reveal d1">
+      <svg viewBox="0 0 960 330" width="960" role="img" aria-label="Seven-step runtime pipeline wrapping the LLM call">
+        <defs><marker id="arB" markerWidth="9" markerHeight="9" refX="5.5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#b6c0cc"/></marker></defs>
+        <!-- bracket -->
+        <path d="M60 74 v-14 h840 v14" fill="none" stroke="#12b886" stroke-width="1.4"/>
+        <text x="480" y="44" text-anchor="middle" font-size="14" font-weight="600" fill="#0c9b73">Grey Panda wraps your call — you never rewrite it</text>
+        <!-- input -->
+        <text x="30" y="150" text-anchor="middle" font-size="12" class="m" fill="#8a94a3" transform="rotate(-90 30 150)">user input</text>
+        <line x1="46" y1="150" x2="66" y2="150" stroke="#b6c0cc" stroke-width="1.6" marker-end="url(#arB)"/>
+        <!-- steps -->
+        <g font-size="12.5" font-weight="600" fill="#14181d">
+          <rect x="70"  y="112" width="112" height="76" rx="11" fill="#fff" stroke="#dbe2ea"/><text class="m" x="126" y="132" text-anchor="middle" font-size="10" fill="#0c9b73">STEP 1</text><text x="126" y="152" text-anchor="middle">Prompt</text><text x="126" y="168" text-anchor="middle">Guardrail</text>
+          <rect x="192" y="112" width="112" height="76" rx="11" fill="#fff" stroke="#dbe2ea"/><text class="m" x="248" y="132" text-anchor="middle" font-size="10" fill="#0c9b73">STEP 2</text><text x="248" y="152" text-anchor="middle">DLP</text><text x="248" y="168" text-anchor="middle">Scanner</text>
+          <rect x="314" y="112" width="112" height="76" rx="11" fill="#fff" stroke="#dbe2ea"/><text class="m" x="370" y="132" text-anchor="middle" font-size="10" fill="#0c9b73">STEP 3</text><text x="370" y="152" text-anchor="middle">Secure</text><text x="370" y="168" text-anchor="middle">Context</text>
+          <rect x="436" y="112" width="112" height="76" rx="11" fill="#14181d" stroke="#14181d"/><text class="m" x="492" y="132" text-anchor="middle" font-size="10" fill="#12b886">STEP 4</text><text x="492" y="152" text-anchor="middle" fill="#fff">LLM call</text><text x="492" y="168" text-anchor="middle" fill="#9aa4b2" font-size="10.5" font-weight="400">unchanged</text>
+          <rect x="558" y="112" width="112" height="76" rx="11" fill="#fff" stroke="#dbe2ea"/><text class="m" x="614" y="132" text-anchor="middle" font-size="10" fill="#0c9b73">STEP 5</text><text x="614" y="152" text-anchor="middle">DLP</text><text x="614" y="168" text-anchor="middle">Scanner</text>
+          <rect x="680" y="112" width="112" height="76" rx="11" fill="#fff" stroke="#dbe2ea"/><text class="m" x="736" y="132" text-anchor="middle" font-size="10" fill="#0c9b73">STEP 6</text><text x="736" y="152" text-anchor="middle">Output</text><text x="736" y="168" text-anchor="middle">Guardrail</text>
+          <rect x="802" y="112" width="112" height="76" rx="11" fill="#fff" stroke="#dbe2ea"/><text class="m" x="858" y="132" text-anchor="middle" font-size="10" fill="#0c9b73">STEP 7</text><text x="858" y="152" text-anchor="middle">Audit</text><text x="858" y="168" text-anchor="middle">Logger</text>
+        </g>
+        <g stroke="#b6c0cc" stroke-width="1.6">
+          <line x1="182" y1="150" x2="190" y2="150" marker-end="url(#arB)"/>
+          <line x1="304" y1="150" x2="312" y2="150" marker-end="url(#arB)"/>
+          <line x1="426" y1="150" x2="434" y2="150" marker-end="url(#arB)"/>
+          <line x1="548" y1="150" x2="556" y2="150" marker-end="url(#arB)"/>
+          <line x1="670" y1="150" x2="678" y2="150" marker-end="url(#arB)"/>
+          <line x1="792" y1="150" x2="800" y2="150" marker-end="url(#arB)"/>
+        </g>
+        <line x1="914" y1="150" x2="936" y2="150" stroke="#b6c0cc" stroke-width="1.6" marker-end="url(#arB)"/>
+        <text x="948" y="150" text-anchor="middle" font-size="12" class="m" fill="#8a94a3" transform="rotate(90 948 150)">safe output</text>
+        <!-- agent note -->
+        <rect x="70" y="222" width="844" height="86" rx="12" fill="#f4f6f9" stroke="#dbe2ea"/>
+        <text x="92" y="250" font-size="14" font-weight="700" fill="#14181d">Building an agent?</text>
+        <text x="92" y="273" font-size="12.5" fill="#3f4753">Add <tspan class="m" fill="#0c9b73" font-weight="700">AgentSecurityWrapper</tspan> — the Rule of Two enforced at construction,</text>
+        <text x="92" y="293" font-size="12.5" fill="#3f4753">deny-by-default tools, HITL gates, per-session call budgets, and a kill switch.</text>
+      </svg>
+      <div class="dcap">Steps 1–3 protect the input, step 4 is your unchanged call, steps 5–7 protect the output and the audit trail.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ DIAGRAM C — TRUST BOUNDARIES ============ -->
+<section class="alt">
+  <div class="wrap">
+    <div class="head reveal">
+      <div class="kicker">Trust boundaries</div>
+      <h2 class="disp">Where the controls sit</h2>
+      <p>Untrusted inputs never reach your trusted app or data stores without passing a Grey Panda control. When the model is fooled — and it will be — the blast radius is bounded.</p>
+    </div>
+    <div class="diagram reveal d1">
+      <svg viewBox="0 0 960 470" width="960" role="img" aria-label="Trust boundary diagram showing Grey Panda controls between untrusted inputs and the trusted application">
+        <defs><marker id="arC" markerWidth="9" markerHeight="9" refX="5.5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#8a94a3"/></marker></defs>
+        <!-- zones -->
+        <rect x="20" y="40" width="250" height="300" rx="14" fill="none" stroke="#d64562" stroke-width="1.4" stroke-dasharray="6 5"/>
+        <text x="40" y="66" font-size="12.5" font-weight="700" class="m" fill="#d64562">UNTRUSTED</text>
+        <rect x="360" y="40" width="180" height="300" rx="14" fill="#e7f7f0" stroke="#12b886" stroke-width="1.4"/>
+        <text x="450" y="66" text-anchor="middle" font-size="12.5" font-weight="700" class="m" fill="#0c9b73">GREY PANDA</text>
+        <rect x="630" y="40" width="310" height="300" rx="14" fill="none" stroke="#3f4753" stroke-width="1.4" stroke-dasharray="6 5"/>
+        <text x="650" y="66" font-size="12.5" font-weight="700" class="m" fill="#3f4753">YOUR APP · trusted</text>
+        <!-- untrusted actors -->
+        <g font-size="13.5" font-weight="600" fill="#14181d">
+          <rect x="44" y="92" width="202" height="58" rx="10" fill="#fff" stroke="#dbe2ea"/><text x="145" y="126" text-anchor="middle">End user input</text>
+          <rect x="44" y="176" width="202" height="58" rx="10" fill="#fff" stroke="#dbe2ea"/><text x="145" y="202" text-anchor="middle" font-size="12.5">External APIs /</text><text x="145" y="220" text-anchor="middle" font-size="12.5">3rd-party MCP tools</text>
+          <rect x="44" y="260" width="202" height="58" rx="10" fill="#fff" stroke="#dbe2ea"/><text x="145" y="294" text-anchor="middle" font-size="12.5">Retrieved / RAG content</text>
+        </g>
+        <!-- grey panda controls -->
+        <g font-size="12" font-weight="600" fill="#0c9b73" class="m">
+          <rect x="378" y="96" width="144" height="46" rx="9" fill="#fff" stroke="#12b886"/><text x="450" y="117" text-anchor="middle">PromptGuardrail</text><text x="450" y="132" text-anchor="middle" font-size="10">+ DLPScanner</text>
+          <rect x="378" y="176" width="144" height="46" rx="9" fill="#fff" stroke="#12b886"/><text x="450" y="197" text-anchor="middle">McpServerGuard</text><text x="450" y="212" text-anchor="middle" font-size="10">pin · schema · scope</text>
+          <rect x="378" y="256" width="144" height="46" rx="9" fill="#fff" stroke="#12b886"/><text x="450" y="277" text-anchor="middle">SecureContext</text><text x="450" y="292" text-anchor="middle" font-size="10">trust-tag as data</text>
+        </g>
+        <!-- trusted app -->
+        <g font-size="13.5" font-weight="600" fill="#14181d">
+          <rect x="654" y="92" width="262" height="52" rx="10" fill="#fff" stroke="#dbe2ea"/><text x="785" y="123" text-anchor="middle">LLM inference</text>
+          <rect x="654" y="164" width="262" height="52" rx="10" fill="#fff" stroke="#dbe2ea"/><text x="785" y="188" text-anchor="middle" font-size="12.5">Agent orchestrator</text><text x="785" y="206" text-anchor="middle" font-size="10" class="m" font-weight="400" fill="#0c9b73">AgentSecurityWrapper · HITL · kill switch</text>
+          <rect x="654" y="236" width="262" height="52" rx="10" fill="#fff" stroke="#dbe2ea"/><text x="785" y="267" text-anchor="middle">Tool executor</text>
+        </g>
+        <!-- inbound flows: untrusted -> control -> trusted -->
+        <g stroke="#8a94a3" stroke-width="1.6" fill="none">
+          <line x1="246" y1="121" x2="376" y2="118" marker-end="url(#arC)"/>
+          <line x1="246" y1="205" x2="376" y2="199" marker-end="url(#arC)"/>
+          <line x1="246" y1="289" x2="376" y2="279" marker-end="url(#arC)"/>
+          <line x1="522" y1="118" x2="652" y2="118" marker-end="url(#arC)"/>
+          <line x1="522" y1="199" x2="652" y2="190" marker-end="url(#arC)"/>
+          <line x1="522" y1="279" x2="652" y2="262" marker-end="url(#arC)"/>
+        </g>
+        <!-- return path: output re-enters Grey Panda before reaching the user -->
+        <rect x="300" y="372" width="330" height="48" rx="10" fill="#fff" stroke="#12b886"/>
+        <text x="465" y="393" text-anchor="middle" font-size="12" font-weight="600" fill="#0c9b73" class="m">OutputGuardrail + DLPScanner</text>
+        <text x="465" y="409" text-anchor="middle" font-size="10.5" fill="#3f4753">scans the response on the way back to the user</text>
+        <path d="M450 300 v40 M450 340 h0 M450 340 v32" fill="none" stroke="#12b886" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#arC)"/>
+        <!-- audit -->
+        <rect x="654" y="372" width="286" height="48" rx="10" fill="#14181d"/>
+        <text x="797" y="393" text-anchor="middle" font-size="12.5" font-weight="600" fill="#fff" class="m">AuditLogger</text>
+        <text x="797" y="409" text-anchor="middle" font-size="10" fill="#9aa4b2">structured events · zero raw text · SIEM-ready</text>
+      </svg>
+      <div class="dcap">Every crossing from untrusted to trusted passes a control; the return path is scanned and sanitised; all of it is audited.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ REPO LAYOUT ============ -->
+<section>
+  <div class="wrap">
+    <div class="head reveal">
+      <div class="kicker">Layout</div>
+      <h2 class="disp">The repository</h2>
+      <p>Five audience-facing module kits at the root, all powered by one shared engine under <code>src/greypanda/</code>.</p>
+    </div>
+    <div class="codeblock reveal d1">
+grey-panda/<br>
+├── <span class="g">Module 1 - Developer Kit/</span>            <span class="c">quickstart, SDK how-tos</span><br>
+├── <span class="g">Module 2 - Security Reviewer Kit/</span>    <span class="c">reviewer guide, AISVS, threat-models</span><br>
+├── <span class="g">Module 3 - Scanner and CI-CD Kit/</span>    <span class="c">rules catalog, CI + SARIF how-tos</span><br>
+├── <span class="g">Module 4 - MCP and Agent Security Kit/</span> <span class="c">MCP + agent how-tos</span><br>
+├── <span class="g">Module 5 - Standards and Governance Kit/</span> <span class="c">can/cannot, mappings</span><br>
+├── src/greypanda/          <span class="c">← the shared engine (installable)</span><br>
+│&nbsp;&nbsp; ├── sdk/         <span class="c">guardrails · dlp · context · agent · audit · mcp · acs</span><br>
+│&nbsp;&nbsp; ├── scanner/     <span class="c">rules · engine · reporters · profiles</span><br>
+│&nbsp;&nbsp; ├── verify/      <span class="c">aisvs</span><br>
+│&nbsp;&nbsp; ├── mcpserver/   <span class="c">stdio MCP server</span><br>
+│&nbsp;&nbsp; ├── cli/         <span class="c">gp</span><br>
+│&nbsp;&nbsp; └── data/        <span class="c">standards/*.json + checklist</span><br>
+├── examples/ · tests/ · skill/ · docs/ (this site)
+    </div>
+  </div>
+</section>
+
+<section class="alt cta-final">
+  <div class="wrap">
+    <div class="kicker reveal" style="text-align:center;">Dig in</div>
+    <h2 class="disp reveal d1" style="font-size:clamp(28px,4vw,42px);margin-top:14px;">Read the code, run the tests.</h2>
+    <div class="cta reveal d2">
+      <a class="btn btn-primary" href="https://github.com/dibakshya01/grey-panda">★ Star on GitHub</a>
+      <a class="btn btn-line" href="docs.html">Back to docs</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <a class="brand" href="index.html"><img src="assets/logo.svg" alt=""> Grey Panda</a>
+    <div class="fl">
+      <a href="index.html">Home</a>
+      <a href="docs.html">Docs</a>
+      <a href="contact.html">Contact</a>
+      <a href="https://github.com/dibakshya01/grey-panda">GitHub</a>
+      <a href="https://pypi.org/project/grey-panda/">PyPI</a>
+    </div>
+    <div class="fine">🐼 <b>Grey Panda</b> — make the secure path the easy path. &nbsp;·&nbsp; © <span data-year>2026</span> · Apache-2.0.</div>
+  </div>
+</footer>
+
+<script src="assets/site.js"></script>
+</body>
+</html>

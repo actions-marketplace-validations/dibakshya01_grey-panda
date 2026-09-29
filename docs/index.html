@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Grey Panda — the calm guardian for AI, agent & MCP code</title>
+<meta name="description" content="A zero-dependency, standards-anchored AI security toolkit. Scan, guard, and verify LLM, agent, and MCP code — in your IDE, in CI, or from the terminal. OWASP-anchored, Apache-2.0.">
+<meta property="og:title" content="Grey Panda — AI security toolkit">
+<meta property="og:description" content="The calm guardian for AI, agent & MCP code. Zero dependencies, OWASP-anchored, runs in seconds.">
+<meta property="og:image" content="https://raw.githubusercontent.com/dibakshya01/grey-panda/main/docs/assets/hero.png">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="assets/logo.svg">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add("js");</script>
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+
+<nav><div class="wrap">
+  <a class="brand" href="index.html"><img src="assets/logo.svg" alt=""> Grey Panda</a>
+  <button class="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+  <div class="tabs">
+    <a href="index.html" class="active">Home</a>
+    <a href="docs.html">Docs</a>
+    <a href="architecture.html">Architecture</a>
+    <a href="contact.html">Contact</a>
+    <a class="gh" href="https://github.com/dibakshya01/grey-panda">GitHub ★</a>
+  </div>
+</div></nav>
+
+<header class="hero" id="top">
+  <div class="grid"></div>
+  <div class="wrap">
+    <div class="kicker reveal">Open-source · Zero-dependency · OWASP-anchored</div>
+    <h1 class="disp reveal d1">The calm guardian for<br>AI, agent &amp; <span class="g">MCP</span> code.</h1>
+    <p class="lede reveal d2">A standards-anchored AI security toolkit any developer or reviewer can run in seconds — in the IDE, in CI, or from the terminal. You never rewrite your LLM call. You wrap it.</p>
+    <div class="install reveal d3">
+      <span><span class="p">$</span> pip install grey-panda</span>
+      <button data-copy="pip install grey-panda">copy</button>
+    </div>
+    <div class="cta reveal d3">
+      <a class="btn btn-primary" href="https://github.com/dibakshya01/grey-panda">★ Star on GitHub</a>
+      <a class="btn btn-ghost" href="docs.html">Read the docs</a>
+    </div>
+    <div class="badges reveal d4">
+      <span class="badge">Apache-2.0</span>
+      <span class="badge">Python <b>3.9+</b></span>
+      <span class="badge">runtime deps <b>0</b></span>
+      <span class="badge"><b>26</b> scanner rules</span>
+      <span class="badge">LLM · Agentic · AISVS · MCP</span>
+    </div>
+    <div class="demo reveal d4"><img src="assets/demo.gif" alt="Grey Panda scanning a vulnerable app, then the same app rebuilt clean"></div>
+  </div>
+</header>
+
+<section id="why">
+  <div class="wrap">
+    <div class="head reveal">
+      <div class="kicker">The problem</div>
+      <h2 class="disp">AI ships a new attack surface — mostly unguarded.</h2>
+      <p>Traditional AppSec never covered prompts, tools, agents, or MCP. These are the risks your existing scanners don't see.</p>
+    </div>
+    <div class="grid3">
+      <div class="card reveal d1"><div class="id">LLM01</div><h3>Prompt injection is #1</h3><p>The top AI attack pattern — and it needs no authentication. Any user input can hijack the model.</p></div>
+      <div class="card reveal d2"><div class="id">LLM03 · ASI</div><h3>Agents act irreversibly</h3><p>One injected instruction can make an agent send money, delete data, or call a tool with your credentials.</p></div>
+      <div class="card reveal d3"><div class="id">AISVS C10</div><h3>MCP tool poisoning</h3><p>A tool's description hides instructions, or a trusted tool is silently swapped after you approved it — a "rug pull".</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="alt" id="bundle">
+  <div class="wrap">
+    <div class="head reveal">
+      <div class="kicker">The bundle</div>
+      <h2 class="disp">Five kits. One zero-dependency engine.</h2>
+      <p>Each audience gets a clear front door — all powered by one shared, tested engine. No duplication, no drift.</p>
+    </div>
+    <div class="grid3">
+      <a class="card mod reveal d1" href="https://github.com/dibakshya01/grey-panda/tree/main/Module%201%20-%20Developer%20Kit"><span class="arrow">→</span><div class="n">Module 1</div><div class="ic">🧰</div><h3>Developer Kit</h3><p>Drop-in SDK guardrails + IDE integration. Protect an LLM call in under 2 minutes.</p></a>
+      <a class="card mod reveal d2" href="https://github.com/dibakshya01/grey-panda/tree/main/Module%202%20-%20Security%20Reviewer%20Kit"><span class="arrow">→</span><div class="n">Module 2</div><div class="ic">🛡️</div><h3>Security Reviewer Kit</h3><p>AppSec gate: AISVS verify, threat models, injection battery, sign-off.</p></a>
+      <a class="card mod reveal d3" href="https://github.com/dibakshya01/grey-panda/tree/main/Module%203%20-%20Scanner%20and%20CI-CD%20Kit"><span class="arrow">→</span><div class="n">Module 3</div><div class="ic">🔍</div><h3>Scanner &amp; CI/CD Kit</h3><p>26 rules → OWASP IDs. Markdown / JSON / SARIF. GitHub Action + pre-commit.</p></a>
+      <a class="card mod reveal d1" href="https://github.com/dibakshya01/grey-panda/tree/main/Module%204%20-%20MCP%20and%20Agent%20Security%20Kit"><span class="arrow">→</span><div class="n">Module 4</div><div class="ic">🤖</div><h3>MCP &amp; Agent Security Kit</h3><p>Rule of Two, HITL, kill switch, MCP manifest pinning, ACS Guardian.</p></a>
+      <a class="card mod reveal d2" href="https://github.com/dibakshya01/grey-panda/tree/main/Module%205%20-%20Standards%20and%20Governance%20Kit"><span class="arrow">→</span><div class="n">Module 5</div><div class="ic">📚</div><h3>Standards &amp; Governance Kit</h3><p>The knowledge pack, mappings, and the honest Can/Cannot-Do doc.</p></a>
+      <div class="card reveal d3" style="background:var(--ink);color:#fff;display:flex;flex-direction:column;justify-content:center;">
+        <div class="disp" style="font-weight:700;font-size:30px;">gp</div>
+        <p style="color:#c3cbd6;margin-top:8px;">One CLI drives them all —<br><span class="mono" style="color:var(--jade)">scan · verify · mcp · init</span></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="wrap">
+    <div class="head reveal">
+      <div class="kicker">How it works</div>
+      <h2 class="disp">A 7-step request pipeline.</h2>
+      <p>Defense in depth: known patterns blocked at input, data quarantined even if injection succeeds, output cleaned, every action audited.</p>
+    </div>
+    <div class="pipe reveal d1">
+      <div class="step"><div class="s">STEP 1</div><div class="nm">PromptGuardrail</div><div class="d">block injection</div></div>
+      <div class="step"><div class="s">STEP 2</div><div class="nm">DLPScanner</div><div class="d">redact PII &amp; secrets</div></div>
+      <div class="step"><div class="s">STEP 3</div><div class="nm">SecureContext</div><div class="d">tag trust</div></div>
+      <div class="step llm"><div class="s">STEP 4</div><div class="nm">LLM call</div><div class="d">your call — unchanged</div></div>
+      <div class="step"><div class="s">STEP 5</div><div class="nm">DLPScanner</div><div class="d">scan the response</div></div>
+      <div class="step"><div class="s">STEP 6</div><div class="nm">OutputGuardrail</div><div class="d">block exfil / XSS</div></div>
+      <div class="step"><div class="s">STEP 7</div><div class="nm">AuditLogger</div><div class="d">zero-raw-text event</div></div>
+    </div>
+    <div class="card reveal d2" style="margin-top:26px;">
+      <b class="disp" style="font-size:19px;">Building an agent?</b>
+      <p style="margin-top:6px;font-size:16px;">Add <code style="color:var(--jade-d);font-weight:600;">AgentSecurityWrapper</code> — the Rule of Two enforced at construction, deny-by-default tools, HITL gates, per-session budgets, and a kill switch. See the <a href="architecture.html" style="color:var(--jade-d);font-weight:600;">architecture &rarr;</a></p>
+    </div>
+  </div>
+</section>
+
+<section class="alt" id="standards">
+  <div class="wrap">
+    <div class="head reveal">
+      <div class="kicker">Credibility</div>
+      <h2 class="disp">Standards-anchored, not opinion-driven.</h2>
+      <p>Every rule, checklist item, and SDK control cites a specific ID. Also grounded in NIST AI 100-2 and Meta's "Rule of Two".</p>
+    </div>
+    <div class="std">
+      <div class="st reveal d1"><div class="c">10</div><div class="t">OWASP LLM Top 10 2026</div><div class="i">LLM01–LLM10</div></div>
+      <div class="st reveal d2"><div class="c">21</div><div class="t">GenAI Data Security</div><div class="i">DSGAI01–DSGAI21</div></div>
+      <div class="st reveal d3"><div class="c">10</div><div class="t">Agentic Apps Top 10</div><div class="i">ASI01–ASI10</div></div>
+      <div class="st reveal d1"><div class="c">12</div><div class="t">AISVS</div><div class="i">C1–C12 · L1/L2/L3</div></div>
+      <div class="st reveal d2"><div class="c">2</div><div class="t">MCP Security Guides</div><div class="i">dev + third-party</div></div>
+      <div class="st reveal d3"><div class="c">5</div><div class="t">Agent Control Standard</div><div class="i">hooks · dispositions · AgBOM</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="proof">
+  <div class="wrap">
+    <div class="head reveal">
+      <div class="kicker">Proof</div>
+      <h2 class="disp">Spotless by construction.</h2>
+      <p>Grey Panda scans its own repository clean in CI. It practices exactly what it preaches.</p>
+    </div>
+    <div class="metrics">
+      <div class="metric reveal d1"><div class="v">26</div><div class="l">scanner rules</div></div>
+      <div class="metric reveal d2"><div class="v" style="color:var(--jade-d)">0</div><div class="l">runtime dependencies</div></div>
+      <div class="metric reveal d3"><div class="v">76</div><div class="l">tests, all green</div></div>
+      <div class="metric reveal d4"><div class="v">3</div><div class="l">formats: md·json·sarif</div></div>
+    </div>
+    <div class="beat reveal">
+      <span class="chip" style="background:#fdecef;color:#d64562;">21 findings</span>
+      <span style="font-size:30px;color:var(--muted)">→</span>
+      <span class="chip" style="background:#e7f7f0;color:#0c9b73;">0 ✓</span>
+      <span style="color:var(--slate);font-size:15px;">the same app, rebuilt with Grey Panda controls</span>
+    </div>
+  </div>
+</section>
+
+<section class="alt" id="who">
+  <div class="wrap">
+    <div class="head reveal">
+      <div class="kicker">For everyone</div>
+      <h2 class="disp">Same safety floor. Scaled process.</h2>
+      <p>One tool, three profiles — from a solo indie dev to a regulated enterprise. Nobody is priced out of safety.</p>
+    </div>
+    <div class="aud">
+      <div class="col reveal d1"><div class="p">solo</div><h3>Indie</h3><div class="who">Prototypes &amp; side projects</div><ul><li>High-signal core rules</li><li>Drop-in SDK</li><li>Fail on <b>CRITICAL</b></li></ul></div>
+      <div class="col feature reveal d2"><div class="p">team</div><h3>Startup</h3><div class="who">Teams shipping fast</div><ul><li>+ DLP, RAG, MCP, shadow-AI</li><li>+ CI gate &amp; pre-commit</li><li>Fail on <b>HIGH</b></li></ul></div>
+      <div class="col reveal d3"><div class="p">enterprise</div><h3>Regulated</h3><div class="who">Large / compliance-bound</div><ul><li>Every rule on</li><li>+ AppSec gate &amp; AISVS L1/L2/L3</li><li>Fail on <b>HIGH</b></li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section id="honest">
+  <div class="wrap">
+    <div class="honest reveal">
+      <h3 class="disp">🧭 Honest about limits</h3>
+      <p>Grey Panda is a <b style="color:#fff">strong floor, not a ceiling</b>. Pattern matching can't stop <i>all</i> prompt injection; regex DLP is language-specific; static analysis has false positives and negatives. We ship a whole document — with a confidence level and failure condition for <b style="color:#fff">every</b> capability. <a href="https://github.com/dibakshya01/grey-panda/blob/main/Module%205%20-%20Standards%20and%20Governance%20Kit/WHAT_IT_CAN_AND_CANNOT_DO.md">Read what it can &amp; cannot do →</a></p>
+    </div>
+  </div>
+</section>
+
+<section class="alt cta-final">
+  <div class="wrap">
+    <div class="kicker reveal" style="text-align:center;">Get started</div>
+    <h2 class="disp reveal d1" style="font-size:clamp(30px,4.5vw,48px);margin-top:14px;">Two minutes to safer AI.</h2>
+    <div class="install reveal d2" style="margin:28px auto 0;">
+      <span><span class="p">$</span> pip install grey-panda &amp;&amp; gp scan .</span>
+      <button data-copy="pip install grey-panda && gp scan .">copy</button>
+    </div>
+    <div class="cta reveal d2">
+      <a class="btn btn-dark" href="https://github.com/dibakshya01/grey-panda">★ Star on GitHub</a>
+      <a class="btn btn-primary" href="https://pypi.org/project/grey-panda/">View on PyPI</a>
+      <a class="btn btn-line" href="docs.html">Read the docs</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <a class="brand" href="index.html"><img src="assets/logo.svg" alt=""> Grey Panda</a>
+    <div class="fl">
+      <a href="docs.html">Docs</a>
+      <a href="architecture.html">Architecture</a>
+      <a href="contact.html">Contact</a>
+      <a href="https://github.com/dibakshya01/grey-panda">GitHub</a>
+      <a href="https://pypi.org/project/grey-panda/">PyPI</a>
+    </div>
+    <div class="fine">
+      🐼 <b>Grey Panda</b> — make the secure path the easy path. &nbsp;·&nbsp; © <span data-year>2026</span> · Apache-2.0.
+      Standards are the property of their authors; Grey Panda is an independent project and is not affiliated with or endorsed by OWASP.
+    </div>
+  </div>
+</footer>
+
+<script src="assets/site.js"></script>
+</body>
+</html>

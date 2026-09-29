@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Docs — Grey Panda</title>
+<meta name="description" content="Grey Panda documentation: install, quick start, the five module kits, the CLI command reference, and IDE/MCP setup.">
+<link rel="icon" href="assets/logo.svg">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add("js");</script>
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+
+<nav><div class="wrap">
+  <a class="brand" href="index.html"><img src="assets/logo.svg" alt=""> Grey Panda</a>
+  <button class="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+  <div class="tabs">
+    <a href="index.html">Home</a>
+    <a href="docs.html" class="active">Docs</a>
+    <a href="architecture.html">Architecture</a>
+    <a href="contact.html">Contact</a>
+    <a class="gh" href="https://github.com/dibakshya01/grey-panda">GitHub ★</a>
+  </div>
+</div></nav>
+
+<header class="hero page">
+  <div class="grid"></div>
+  <div class="wrap">
+    <div class="kicker reveal">Documentation</div>
+    <h1 class="disp reveal d1">Everything you need to ship safely.</h1>
+    <p class="lede reveal d2">Install once, then scan, guard, and verify — from the terminal, your IDE, or CI. Zero dependencies, Python 3.9+.</p>
+    <div class="install reveal d3">
+      <span><span class="p">$</span> pip install grey-panda</span>
+      <button data-copy="pip install grey-panda">copy</button>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <div class="head reveal">
+      <div class="kicker">Start here</div>
+      <h2 class="disp">Two-minute quick start</h2>
+    </div>
+    <div class="codeblock reveal d1">
+<span class="c"># 1. install (pure Python, zero dependencies)</span><br>
+pip install grey-panda<br><br>
+<span class="c"># 2. scan your repo — real findings, beautiful report</span><br>
+gp scan .<br><br>
+<span class="c"># 3. add drop-in guardrails — you never rewrite your LLM call, you wrap it</span><br>
+<span class="k">from</span> greypanda <span class="k">import</span> PromptGuardrail, DLPScanner, OutputGuardrail<br>
+safe&nbsp;&nbsp;= guard.<span class="g">assert_safe</span>(user_input)<br>
+clean&nbsp;= dlp.<span class="g">redact</span>(safe)<br>
+answer = out.<span class="g">sanitize</span>(call_your_llm(clean)).sanitized_text
+    </div>
+  </div>
+</section>
+
+<section class="alt">
+  <div class="wrap">
+    <div class="head reveal">
+      <div class="kicker">The five kits</div>
+      <h2 class="disp">Pick your front door</h2>
+      <p>Each kit has a friendly README plus focused how-to guides. Same engine underneath.</p>
+    </div>
+    <div class="doc-grid">
+      <a class="doc-card reveal d1" href="https://github.com/dibakshya01/grey-panda/tree/main/Module%201%20-%20Developer%20Kit">
+        <div class="k">MODULE 1 · 🧰</div><h3>Developer Kit</h3>
+        <p>Drop-in SDK guardrails and IDE integration for anyone building AI features.</p>
+        <ul>
+          <li><a href="https://github.com/dibakshya01/grey-panda/blob/main/Module%201%20-%20Developer%20Kit/QUICKSTART.md">Quick start</a></li>
+          <li><a href="https://github.com/dibakshya01/grey-panda/blob/main/Module%201%20-%20Developer%20Kit/HOW-TO-add-guardrails.md">How to add guardrails</a></li>
+          <li><a href="https://github.com/dibakshya01/grey-panda/blob/main/Module%201%20-%20Developer%20Kit/HOW-TO-use-in-your-ide.md">How to use it in your IDE</a></li>
+          <li><a href="https://github.com/dibakshya01/grey-panda/blob/main/Module%201%20-%20Developer%20Kit/PROFILES.md">Profiles: solo / team / enterprise</a></li>
+        </ul>
+      </a>
+      <a class="doc-card reveal d2" href="https://github.com/dibakshya01/grey-panda/tree/main/Module%202%20-%20Security%20Reviewer%20Kit">
+        <div class="k">MODULE 2 · 🛡️</div><h3>Security Reviewer Kit</h3>
+        <p>The AppSec gate: turn "is this safe to ship?" into a signable decision.</p>
+        <ul>
+          <li><a href="https://github.com/dibakshya01/grey-panda/blob/main/Module%202%20-%20Security%20Reviewer%20Kit/APPSEC_REVIEWER_GUIDE.md">AppSec Reviewer Guide</a></li>
+          <li><a href="https://github.com/dibakshya01/grey-panda/blob/main/Module%202%20-%20Security%20Reviewer%20Kit/HOW-TO-run-aisvs-verification.md">How to run AISVS verification</a></li>
+          <li><a href="https://github.com/dibakshya01/grey-panda/tree/main/Module%202%20-%20Security%20Reviewer%20Kit/threat-models">Threat model template</a></li>
+        </ul>
+      </a>
+      <a class="doc-card reveal d1" href="https://github.com/dibakshya01/grey-panda/tree/main/Module%203%20-%20Scanner%20and%20CI-CD%20Kit">
+        <div class="k">MODULE 3 · 🔍</div><h3>Scanner &amp; CI/CD Kit</h3>
+        <p>26 high-precision rules, SARIF output, and an automated PR gate.</p>
+        <ul>
+          <li><a href="https://github.com/dibakshya01/grey-panda/blob/main/Module%203%20-%20Scanner%20and%20CI-CD%20Kit/RULES_CATALOG.md">Rules catalog</a></li>
+          <li><a href="https://github.com/dibakshya01/grey-panda/blob/main/Module%203%20-%20Scanner%20and%20CI-CD%20Kit/HOW-TO-add-to-ci.md">How to add to CI/CD</a></li>
+          <li><a href="https://github.com/dibakshya01/grey-panda/blob/main/Module%203%20-%20Scanner%20and%20CI-CD%20Kit/HOW-TO-read-sarif.md">How to read SARIF</a></li>
+          <li><a href="https://github.com/dibakshya01/grey-panda/blob/main/Module%203%20-%20Scanner%20and%20CI-CD%20Kit/HOW-TO-write-a-rule.md">How to write a rule</a></li>
+        </ul>
+      </a>
+      <a class="doc-card reveal d2" href="https://github.com/dibakshya01/grey-panda/tree/main/Module%204%20-%20MCP%20and%20Agent%20Security%20Kit">
+        <div class="k">MODULE 4 · 🤖</div><h3>MCP &amp; Agent Security Kit</h3>
+        <p>Least privilege by construction, plus rug-pull detection for MCP tools.</p>
+        <ul>
+          <li><a href="https://github.com/dibakshya01/grey-panda/blob/main/Module%204%20-%20MCP%20and%20Agent%20Security%20Kit/HOW-TO-guard-an-agent.md">How to guard an agent</a></li>
+          <li><a href="https://github.com/dibakshya01/grey-panda/blob/main/Module%204%20-%20MCP%20and%20Agent%20Security%20Kit/HOW-TO-secure-your-mcp-server.md">How to secure your MCP server</a></li>
+          <li><a href="https://github.com/dibakshya01/grey-panda/blob/main/Module%204%20-%20MCP%20and%20Agent%20Security%20Kit/HOW-TO-run-the-mcp-server.md">Run Grey Panda as an MCP server</a></li>
+        </ul>
+      </a>
+      <a class="doc-card reveal d1" href="https://github.com/dibakshya01/grey-panda/tree/main/Module%205%20-%20Standards%20and%20Governance%20Kit">
+        <div class="k">MODULE 5 · 📚</div><h3>Standards &amp; Governance Kit</h3>
+        <p>The knowledge pack, the mappings, and the honest limits doc.</p>
+        <ul>
+          <li><a href="https://github.com/dibakshya01/grey-panda/blob/main/Module%205%20-%20Standards%20and%20Governance%20Kit/WHAT_IT_CAN_AND_CANNOT_DO.md">What it can &amp; cannot do</a></li>
+          <li><a href="https://github.com/dibakshya01/grey-panda/tree/main/Module%205%20-%20Standards%20and%20Governance%20Kit/mappings">Standards → control mappings</a></li>
+        </ul>
+      </a>
+      <a class="doc-card reveal d2" href="architecture.html">
+        <div class="k">DEEP DIVE · 🏛️</div><h3>Architecture</h3>
+        <p>How the pieces fit: the pipeline, the trust boundaries, and the one-engine design — with diagrams.</p>
+        <ul><li><a href="architecture.html">Open the architecture page →</a></li></ul>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="head reveal">
+      <div class="kicker">Reference</div>
+      <h2 class="disp">The <code>gp</code> command line</h2>
+    </div>
+    <table class="cmd-table reveal d1">
+      <tr><td>gp scan [path]</td><td>Scan for AI/agent/MCP issues (<code>--profile</code>, <code>--format md/json/sarif</code>, <code>--fail-on</code>).</td></tr>
+      <tr><td>gp init [path]</td><td>Scaffold config, a GitHub Action, and pre-commit into a repo.</td></tr>
+      <tr><td>gp verify [path]</td><td>AISVS Level 1/2/3 verification report.</td></tr>
+      <tr><td>gp checklist</td><td>Print the AI security checklist.</td></tr>
+      <tr><td>gp standards [id]</td><td>List or explain standards / control IDs.</td></tr>
+      <tr><td>gp agbom &lt;agent&gt;</td><td>Emit an Agent Bill of Materials.</td></tr>
+      <tr><td>gp mcp</td><td>Run Grey Panda as an MCP server (stdio).</td></tr>
+      <tr><td>gp doctor</td><td>Environment self-check + honest-limits pointer.</td></tr>
+    </table>
+  </div>
+</section>
+
+<section class="alt">
+  <div class="wrap">
+    <div class="head reveal">
+      <div class="kicker">In your IDE</div>
+      <h2 class="disp">Call Grey Panda while you code</h2>
+      <p>Grey Panda ships as an MCP server, so Claude Code, Cursor, Windsurf, or VS Code can call it directly.</p>
+    </div>
+    <div class="codeblock reveal d1">
+<span class="c">// Claude Code / Cursor / Windsurf MCP config</span><br>
+{ <span class="g">"mcpServers"</span>: { <span class="g">"grey-panda"</span>: { <span class="g">"command"</span>: <span class="g">"gp"</span>, <span class="g">"args"</span>: [<span class="g">"mcp"</span>] } } }
+    </div>
+    <p style="margin-top:16px;color:var(--slate);">Then ask your assistant to <i>"review this file with grey panda"</i> or <i>"explain LLM03"</i>.</p>
+  </div>
+</section>
+
+<section class="cta-final">
+  <div class="wrap">
+    <div class="kicker reveal" style="text-align:center;">Ready?</div>
+    <h2 class="disp reveal d1" style="font-size:clamp(28px,4vw,42px);margin-top:14px;">Scan your repo now.</h2>
+    <div class="install reveal d2" style="margin:26px auto 0;">
+      <span><span class="p">$</span> pip install grey-panda &amp;&amp; gp scan .</span>
+      <button data-copy="pip install grey-panda && gp scan .">copy</button>
+    </div>
+    <div class="cta reveal d2">
+      <a class="btn btn-primary" href="https://github.com/dibakshya01/grey-panda">★ Star on GitHub</a>
+      <a class="btn btn-line" href="architecture.html">See the architecture</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <a class="brand" href="index.html"><img src="assets/logo.svg" alt=""> Grey Panda</a>
+    <div class="fl">
+      <a href="index.html">Home</a>
+      <a href="architecture.html">Architecture</a>
+      <a href="contact.html">Contact</a>
+      <a href="https://github.com/dibakshya01/grey-panda">GitHub</a>
+      <a href="https://pypi.org/project/grey-panda/">PyPI</a>
+    </div>
+    <div class="fine">🐼 <b>Grey Panda</b> — make the secure path the easy path. &nbsp;·&nbsp; © <span data-year>2026</span> · Apache-2.0.</div>
+  </div>
+</footer>
+
+<script src="assets/site.js"></script>
+</body>
+</html>
