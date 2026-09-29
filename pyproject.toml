@@ -60,6 +60,9 @@ packages = ["src/greypanda"]
 "src/greypanda/data/AI_SECURITY_CHECKLIST.md" = "greypanda/data/AI_SECURITY_CHECKLIST.md"
 
 [tool.hatch.build.targets.sdist]
+# README images are served from raw.githubusercontent.com, so the heavy
+# docs/assets media is intentionally excluded from the sdist to keep it lean.
+exclude = ["/docs/assets"]
 include = [
     "/src",
     "/docs",

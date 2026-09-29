@@ -3,7 +3,7 @@
 <!-- ╚══════════════════════════════════════════════════════════════════╝ -->
 
 <p align="center">
-  <img src="docs/assets/hero.png" alt="Grey Panda — the calm guardian for AI, agent, and MCP code" width="100%" />
+  <img src="https://raw.githubusercontent.com/dibakshya01/grey-panda/main/docs/assets/hero.png" alt="Grey Panda — the calm guardian for AI, agent, and MCP code" width="100%" />
 </p>
 
 <p align="center">
@@ -29,7 +29,7 @@
 </p>
 
 <p align="center">
-  <img src="docs/assets/demo.gif" alt="Grey Panda in action: scan a vulnerable app, then the same app rebuilt clean" width="84%" />
+  <img src="https://raw.githubusercontent.com/dibakshya01/grey-panda/main/docs/assets/demo.gif" alt="Grey Panda in action: scan a vulnerable app, then the same app rebuilt clean" width="84%" />
 </p>
 
 ---
@@ -62,19 +62,19 @@ answer = out.sanitize(reply).sanitized_text     # block data-exfil URLs & unsafe
 
 ## 🎯 Why this exists
 
-<p align="center"><img src="docs/assets/slide-1-problem.png" alt="The problem: AI ships a new, mostly-unguarded attack surface" width="100%"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/dibakshya01/grey-panda/main/docs/assets/slide-1-problem.png" alt="The problem: AI ships a new, mostly-unguarded attack surface" width="100%"></p>
 
 Prompt injection is the **#1 AI attack pattern and it needs no authentication** (OWASP `LLM01`). Agentic systems can take an *irreversible* action from a *single* injected instruction. And MCP has opened a whole new surface — **tool poisoning** and **rug pulls**. Your existing AppSec tools don't see any of it.
 
 ## 🐼 The idea: one calm guardian
 
-<p align="center"><img src="docs/assets/slide-2-solution.png" alt="One calm guardian — the secure path becomes the easy path" width="100%"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/dibakshya01/grey-panda/main/docs/assets/slide-2-solution.png" alt="One calm guardian — the secure path becomes the easy path" width="100%"></p>
 
 Grey Panda keeps two rare qualities as non-negotiable: **intellectual honesty** (a whole doc on what it [can and cannot do](Module%205%20-%20Standards%20and%20Governance%20Kit/WHAT_IT_CAN_AND_CANNOT_DO.md)) and **standards-anchoring** (every rule cites an OWASP ID). No neon-hacker theatre — just controls that are a joy to adopt.
 
 ## 📦 What's in the bundle
 
-<p align="center"><img src="docs/assets/slide-3-modules.png" alt="Five kits, one engine" width="100%"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/dibakshya01/grey-panda/main/docs/assets/slide-3-modules.png" alt="Five kits, one engine" width="100%"></p>
 
 Five audience-facing **module kits**, all powered by one shared, zero-dependency engine:
 
@@ -88,13 +88,13 @@ Five audience-facing **module kits**, all powered by one shared, zero-dependency
 
 ## ⚙️ How it works
 
-<p align="center"><img src="docs/assets/slide-4-pipeline.png" alt="A 7-step request pipeline" width="100%"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/dibakshya01/grey-panda/main/docs/assets/slide-4-pipeline.png" alt="A 7-step request pipeline" width="100%"></p>
 
 Defense in depth, not prevention theatre. Full walkthrough: **[HOW-TO-add-guardrails](Module%201%20-%20Developer%20Kit/HOW-TO-add-guardrails.md)** · architecture: **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**.
 
 ## 🔐 Standards-anchored
 
-<p align="center"><img src="docs/assets/slide-5-standards.png" alt="Standards anchored, not opinion-driven" width="100%"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/dibakshya01/grey-panda/main/docs/assets/slide-5-standards.png" alt="Standards anchored, not opinion-driven" width="100%"></p>
 
 Every rule, checklist item, and SDK control cites a specific ID. Explore any control from the CLI:
 
@@ -107,7 +107,7 @@ Full mapping tables: **[Module 5 → mappings/](Module%205%20-%20Standards%20and
 
 ## ✅ Proof
 
-<p align="center"><img src="docs/assets/slide-6-proof.png" alt="Spotless by construction — scans itself clean" width="100%"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/dibakshya01/grey-panda/main/docs/assets/slide-6-proof.png" alt="Spotless by construction — scans itself clean" width="100%"></p>
 
 See the before/after for yourself — the same app, insecure vs. rebuilt with Grey Panda controls:
 
@@ -118,7 +118,7 @@ gp scan examples/secure_app     --profile enterprise    # ✅ clean
 
 ## 👥 For everyone
 
-<p align="center"><img src="docs/assets/slide-7-audiences.png" alt="Same safety floor, scaled process" width="100%"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/dibakshya01/grey-panda/main/docs/assets/slide-7-audiences.png" alt="Same safety floor, scaled process" width="100%"></p>
 
 ```bash
 gp scan . --profile solo          # high-signal core, fail on CRITICAL
@@ -130,7 +130,7 @@ More: **[Module 1 → PROFILES](Module%201%20-%20Developer%20Kit/PROFILES.md)**.
 
 ## 🚀 Get started
 
-<p align="center"><img src="docs/assets/slide-8-start.png" alt="Two minutes to safer AI" width="100%"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/dibakshya01/grey-panda/main/docs/assets/slide-8-start.png" alt="Two minutes to safer AI" width="100%"></p>
 
 ```bash
 pip install grey-panda           # from PyPI
