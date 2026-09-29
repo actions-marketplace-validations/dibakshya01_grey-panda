@@ -66,7 +66,7 @@
       "description": "System prompts, tool schemas, permissions, or other hidden context are disclosed, expanding the attacker's map of the system.",
       "remediation": "Never return system prompt content in responses; treat internal context as sensitive.",
       "grey_panda_controls": ["SecureContextBuilder"],
-      "scanner_rules": ["GP-AI-008"]
+      "scanner_rules": ["GP-AI-008", "GP-AI-022"]
     },
     {
       "id": "LLM09:2026",
@@ -82,7 +82,7 @@
       "description": "Model output is passed downstream (HTML, SQL, shell, code) without validation, enabling XSS, SQLi, SSRF, or RCE.",
       "remediation": "Sanitize output with OutputGuardrail; validate any generated SQL/code against an allowlist; never execute model output directly.",
       "grey_panda_controls": ["OutputGuardrail"],
-      "scanner_rules": ["GP-AI-004", "GP-AI-014"]
+      "scanner_rules": ["GP-AI-004", "GP-AI-014", "GP-AI-020", "GP-AI-021"]
     }
   ]
 }

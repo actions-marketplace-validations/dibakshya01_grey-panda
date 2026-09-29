@@ -10,9 +10,9 @@ How each control in this standard maps to a Grey Panda SDK control and/or scanne
 | `ASI02` | Tool Misuse and Exploitation | `AgentSecurityWrapper`, `McpServerGuard`, `Guardian` | — |
 | `ASI03` | Identity and Privilege Abuse | `AgentSecurityWrapper` | — |
 | `ASI04` | Agentic Supply Chain Vulnerabilities | `McpToolManifest`, `McpServerGuard`, `agent_bill_of_materials` | — |
-| `ASI05` | Unexpected Code Execution (RCE) | `McpServerGuard` | — |
+| `ASI05` | Unexpected Code Execution (RCE) | `McpServerGuard` | `GP-MCP-002`, `GP-AGT-008` |
 | `ASI06` | Memory & Context Poisoning | `SecureContextBuilder` | — |
-| `ASI07` | Insecure Inter-Agent Communication | `Guardian` | — |
+| `ASI07` | Insecure Inter-Agent Communication | `Guardian` | `GP-AGT-009` |
 | `ASI08` | Cascading Failures | `AgentSecurityWrapper` | — |
 | `ASI09` | Human-Agent Trust Exploitation | `OutputGuardrail` | — |
 | `ASI10` | Rogue Agents | `AgentSecurityWrapper`, `Guardian`, `AuditLogger` | — |

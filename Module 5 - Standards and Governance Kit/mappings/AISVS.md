@@ -113,7 +113,7 @@ Grey Panda controls: `McpServerGuard`, `McpToolManifest`
 | --- | --- | --- | --- |
 | `C10.1.1` | L2 | sdk | Tool manifests are pinned and hashed; changes (rug pulls) are detected. |
 | `C10.2.1` | L2 | sdk | Tool inputs/outputs are schema-validated and treated as untrusted. |
-| `C10.3.1` | L2 | scanner | Remote MCP connections use TLS and OAuth 2.1/OIDC; no token passthrough. |
+| `C10.3.1` | L2 | scanner | Remote MCP connections use TLS and OAuth 2.1/OIDC; no token passthrough; servers are not bound to all interfaces. |
 | `C10.4.1` | L3 | scanner | MCP tool descriptions are checked for poisoning markers. |
 | `C10.5.1` | L2 | scanner | MCP tools never pass model input to a shell/eval sink. |
 

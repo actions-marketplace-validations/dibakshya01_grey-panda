@@ -51,7 +51,7 @@
     {"id": "C10", "title": "Model Context Protocol (MCP) Security", "level": 2, "description": "Security of MCP servers, clients, and tools.", "grey_panda_controls": ["McpServerGuard", "McpToolManifest"], "requirements": [
       {"id": "C10.1.1", "level": 2, "text": "Tool manifests are pinned and hashed; changes (rug pulls) are detected.", "verify": "sdk", "grey_panda_controls": ["McpToolManifest"]},
       {"id": "C10.2.1", "level": 2, "text": "Tool inputs/outputs are schema-validated and treated as untrusted.", "verify": "sdk", "grey_panda_controls": ["McpServerGuard"]},
-      {"id": "C10.3.1", "level": 2, "text": "Remote MCP connections use TLS and OAuth 2.1/OIDC; no token passthrough.", "verify": "scanner", "scanner_rules": ["GP-MCP-003", "GP-MCP-004"]},
+      {"id": "C10.3.1", "level": 2, "text": "Remote MCP connections use TLS and OAuth 2.1/OIDC; no token passthrough; servers are not bound to all interfaces.", "verify": "scanner", "scanner_rules": ["GP-MCP-003", "GP-MCP-004", "GP-MCP-005"]},
       {"id": "C10.4.1", "level": 3, "text": "MCP tool descriptions are checked for poisoning markers.", "verify": "scanner", "scanner_rules": ["GP-MCP-001"]},
       {"id": "C10.5.1", "level": 2, "text": "MCP tools never pass model input to a shell/eval sink.", "verify": "scanner", "scanner_rules": ["GP-MCP-002"]}
     ]},

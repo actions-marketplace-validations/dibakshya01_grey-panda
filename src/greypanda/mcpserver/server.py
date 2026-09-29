@@ -155,13 +155,9 @@ def _tool_list_standards(_args: dict[str, Any]) -> dict[str, Any]:
 
 
 def _tool_checklist(_args: dict[str, Any]) -> dict[str, Any]:
-    # Best-effort: read the shipped checklist doc if present, else a pointer.
-    here = Path(__file__).resolve()
-    for parent in here.parents:
-        candidate = parent / "docs" / "AI_SECURITY_CHECKLIST.md"
-        if candidate.exists():
-            return _text(candidate.read_text(encoding="utf-8"))
-    return _text("Run `gp checklist` in your repo, or see docs/AI_SECURITY_CHECKLIST.md.")
+    from ..data import load_checklist
+
+    return _text(load_checklist())
 
 
 _DISPATCH = {

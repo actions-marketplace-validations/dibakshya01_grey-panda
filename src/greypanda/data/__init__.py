@@ -52,3 +52,10 @@ def control_index() -> dict[str, dict[str, Any]]:
 def lookup(control_id: str) -> dict[str, Any] | None:
     """Look up a single control by ID (e.g. ``LLM01:2026`` or ``C10.2.1``)."""
     return control_index().get(control_id)
+
+
+def load_checklist() -> str:
+    """Return the packaged AI Security Checklist as Markdown text."""
+    ref = resources.files("greypanda.data").joinpath("AI_SECURITY_CHECKLIST.md")
+    with resources.as_file(ref) as path:
+        return path.read_text(encoding="utf-8")

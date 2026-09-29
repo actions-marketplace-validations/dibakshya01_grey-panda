@@ -8,7 +8,7 @@ feeding three surfaces (scanner, SDK, integrations) across the whole delivery pa
    guardrails to an existing LLM call takes under two minutes and never requires
    rewriting the call.
 2. **Honest about limits.** Every capability ships with a confidence level and a
-   failure condition ([WHAT_IT_CAN_AND_CANNOT_DO.md](WHAT_IT_CAN_AND_CANNOT_DO.md)).
+   failure condition ([WHAT_IT_CAN_AND_CANNOT_DO.md](../Module%205%20-%20Standards%20and%20Governance%20Kit/WHAT_IT_CAN_AND_CANNOT_DO.md)).
 3. **Defense in depth, not prevention theater.** No single layer stops everything.
    Known patterns are blocked at input; data is quarantined even if injection
    succeeds; blast radius is limited by least-privilege agents; every action is
@@ -21,7 +21,7 @@ feeding three surfaces (scanner, SDK, integrations) across the whole delivery pa
 `src/greypanda/data/standards/*.json` is the brain: every control ID → title →
 description → remediation → the Grey Panda controls and scanner rules that address
 it. The scanner, `gp verify`, the MCP server, and the AI skill all cite from it.
-`docs/mappings/*.md` are generated from it (`tools/generate_mappings.py`).
+The mapping tables in Module 5 are generated from it (`tools/generate_mappings.py`).
 
 ## The SDK: a 7-step request pipeline
 ```
@@ -60,23 +60,34 @@ DEVELOPER  →  CI/CD GATE  →  APPSEC REVIEW  →  PRODUCTION
 ```
 
 ## Repository layout
+
+The **bundle is organised into five audience-facing module kits** at the repo root,
+all powered by one shared, zero-dependency engine under `src/greypanda/`.
+
 ```
 grey-panda/
-├── src/greypanda/
+├── Module 1 - Developer Kit/            quickstart, profiles, SDK how-tos
+├── Module 2 - Security Reviewer Kit/    reviewer guide, AISVS how-to, threat-models/
+├── Module 3 - Scanner and CI-CD Kit/    rules catalog, CI + SARIF how-tos
+├── Module 4 - MCP and Agent Security Kit/ MCP + agent how-tos
+├── Module 5 - Standards and Governance Kit/ can/cannot, mappings/
+├── src/greypanda/          ← the shared engine (installable package)
 │   ├── sdk/          guardrails, dlp, context, agent, audit, mcp, acs
 │   ├── scanner/      rules, engine, reporters, profiles
 │   ├── verify/       aisvs
 │   ├── mcpserver/    server (stdio MCP)
 │   ├── cli/          main (argparse)
-│   └── data/         standards/*.json (the knowledge pack)
+│   └── data/         standards/*.json + checklist (the knowledge pack)
 ├── standards/        README for the pack
-├── docs/             checklist, can/cannot, quickstart, profiles, mappings/
-├── skill/            SKILL.md
-├── appsec/           reviewer guide + threat-models/
+├── docs/             ARCHITECTURE, assets
+├── skill/            SKILL.md (AI Security Advisor)
 ├── examples/         vulnerable_app, secure_app, example_usage.py
 ├── tests/            unittest suite (zero deps)
-└── tools/            generate_mappings.py
+└── tools/            generate_mappings.py, generate_rules_catalog.py
 ```
+
+Why modules on top of one engine? So each audience has a clear front door, while the
+security logic stays in a single, tested, importable place — no duplication, no drift.
 
 ## Zero dependencies, on purpose
 The shipped package imports only the Python standard library. Nothing to install,

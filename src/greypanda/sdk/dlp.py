@@ -72,7 +72,7 @@ _BUILTIN: dict[str, list[_Pattern]] = {
         ("iban", _c(r"\b[A-Z]{2}\d{2}[A-Z0-9]{11,30}\b")),
     ],
     # org_pii is a template. Replace these with your customer/order/seller ID
-    # formats before shipping. See docs/PROFILES.md.
+    # formats before shipping. See the Developer Kit's PROFILES.md.
     "org_pii": [
         # ("customer_id", _c(r"\bCUST-\d{8}\b")),
         # ("order_id",    _c(r"\bORD-[A-Z0-9]{10}\b")),

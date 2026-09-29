@@ -1,180 +1,138 @@
-<div align="center">
+<!-- ╔══════════════════════════════════════════════════════════════════╗ -->
+<!-- ║  🐼 GREY PANDA — README pitch deck. Slides live in docs/assets/.  ║ -->
+<!-- ╚══════════════════════════════════════════════════════════════════╝ -->
 
-<img src="docs/assets/logo.svg" alt="Grey Panda" width="140" />
+<p align="center">
+  <img src="docs/assets/hero.png" alt="Grey Panda — the calm guardian for AI, agent, and MCP code" width="100%" />
+</p>
 
-# 🐼 Grey Panda
+<p align="center">
+  <a href="LICENSE"><img alt="License: Apache-2.0" src="https://img.shields.io/badge/License-Apache%202.0-1c222a?style=for-the-badge&labelColor=1c222a&color=12b886"></a>
+  <a href="pyproject.toml"><img alt="Python 3.10+" src="https://img.shields.io/badge/python-3.10%2B-1c222a?style=for-the-badge&labelColor=1c222a&color=3f4753"></a>
+  <a href="pyproject.toml"><img alt="Zero runtime dependencies" src="https://img.shields.io/badge/runtime%20deps-0-1c222a?style=for-the-badge&labelColor=1c222a&color=12b886"></a>
+  <a href="Module%205%20-%20Standards%20and%20Governance%20Kit/mappings"><img alt="OWASP anchored" src="https://img.shields.io/badge/OWASP-LLM·Agentic·AISVS·MCP-1c222a?style=for-the-badge&labelColor=1c222a&color=3f4753"></a>
+  <a href="CONTRIBUTING.md"><img alt="PRs welcome" src="https://img.shields.io/badge/PRs-welcome-1c222a?style=for-the-badge&labelColor=1c222a&color=12b886"></a>
+</p>
 
-### The calm guardian for AI, agent, and MCP code.
+<p align="center">
+  <b>A zero-dependency, standards-anchored AI security toolkit that any developer or security reviewer can run in seconds — in the IDE, in CI, or from the terminal.</b>
+</p>
 
-**A zero-dependency, standards-anchored AI security toolkit that any developer or security reviewer can run in seconds — in the IDE, in CI, or from the terminal.**
-
-[![CI](https://img.shields.io/badge/CI-passing-brightgreen)](.github/workflows/ci.yml)
-[![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
-[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](pyproject.toml)
-[![Zero runtime deps](https://img.shields.io/badge/runtime%20deps-0-success)](pyproject.toml)
-[![OWASP anchored](https://img.shields.io/badge/OWASP-LLM%20%7C%20Agentic%20%7C%20AISVS%20%7C%20MCP-6f42c1)](docs/mappings)
-[![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
-
-[Quick start](#-60-second-quick-start) · [What it does](#what-grey-panda-does) · [Standards](#-standards-anchored-not-opinion-driven) · [In your IDE](#-in-your-ide-the-mcp-server) · [Honest limits](docs/WHAT_IT_CAN_AND_CANNOT_DO.md) · [Contributing](CONTRIBUTING.md)
-
-</div>
+<p align="center">
+  <a href="#-quick-start">Quick start</a> ·
+  <a href="#-whats-in-the-bundle">The bundle</a> ·
+  <a href="#-how-it-works">How it works</a> ·
+  <a href="#-standards-anchored">Standards</a> ·
+  <a href="#-in-your-ide">In your IDE</a> ·
+  <a href="Module%205%20-%20Standards%20and%20Governance%20Kit/WHAT_IT_CAN_AND_CANNOT_DO.md">Honest limits</a> ·
+  <a href="CONTRIBUTING.md">Contributing</a>
+</p>
 
 ---
 
 > _"Stop trying to build a model that cannot be fooled. Build the system around it, so that when the model is fooled — and it will be — nothing important breaks."_
 
-Grey Panda makes **the secure path the easy path** for anyone building LLM-powered, agentic, or Model Context Protocol (MCP) features. It ships a static **scanner**, a drop-in **SDK**, and an **MCP server** — all grounded in published standards, all with **zero runtime dependencies**, all runnable in under a minute.
+Grey Panda makes **the secure path the easy path** for anyone building LLM-powered, agentic, or Model Context Protocol (MCP) features — from a solo indie developer to an enterprise AppSec team.
 
-## Why this exists
-
-Prompt injection is the **#1 AI attack pattern and it requires no authentication** (OWASP LLM Top 10 2026, `LLM01`). Agentic systems can take an *irreversible* action — send money, delete data, call a tool with your credentials — from a *single* injected instruction. And MCP has opened a whole new attack surface: **tool poisoning** and **rug pulls**, where a tool's description or behaviour is crafted or silently swapped to hijack your model.
-
-Most teams know this. What they lack is a way to make the secure choice the *frictionless* choice — for a solo dev shipping an indie project just as much as for an enterprise AppSec team. That's Grey Panda.
-
-## ⚡ 60-second quick start
+## ⚡ Quick start
 
 ```bash
-pip install grey-panda           # zero dependencies, pure Python
-gp scan .                        # scan your repo — beautiful report, real findings
+pip install grey-panda        # pure Python, zero dependencies
+gp scan .                     # scan your repo — real findings, beautiful report
 ```
 
-Add drop-in guardrails to an existing LLM call in **under two minutes**:
+Add drop-in guardrails to an existing LLM call in **under two minutes** — you never rewrite the call, you wrap it:
 
 ```python
 from greypanda import PromptGuardrail, DLPScanner, OutputGuardrail
 
 guard, dlp, out = PromptGuardrail(), DLPScanner(), OutputGuardrail()
 
-safe   = guard.assert_safe(user_input)        # blocks known injection + strips invisible Unicode
-clean  = dlp.redact(safe)                      # removes PII & secrets before the model sees them
-reply  = call_your_llm(clean)                  # ← your existing call, unchanged
-answer = out.sanitize(reply).sanitized_text    # blocks data-exfil image URLs & unsafe HTML
+safe   = guard.assert_safe(user_input)        # block known injection + strip invisible Unicode
+clean  = dlp.redact(safe)                       # remove PII & secrets before the model sees them
+reply  = call_your_llm(clean)                   # ← your existing call, unchanged
+answer = out.sanitize(reply).sanitized_text     # block data-exfil URLs & unsafe HTML
 ```
 
-That's the whole idea: **you never rewrite your LLM call** — you wrap it.
+---
 
-## What Grey Panda does
+## 🎯 Why this exists
 
-| | Pillar | What you get |
+<p align="center"><img src="docs/assets/slide-1-problem.png" alt="The problem: AI ships a new, mostly-unguarded attack surface" width="100%"></p>
+
+Prompt injection is the **#1 AI attack pattern and it needs no authentication** (OWASP `LLM01`). Agentic systems can take an *irreversible* action from a *single* injected instruction. And MCP has opened a whole new surface — **tool poisoning** and **rug pulls**. Your existing AppSec tools don't see any of it.
+
+## 🐼 The idea: one calm guardian
+
+<p align="center"><img src="docs/assets/slide-2-solution.png" alt="One calm guardian — the secure path becomes the easy path" width="100%"></p>
+
+Grey Panda keeps two rare qualities as non-negotiable: **intellectual honesty** (a whole doc on what it [can and cannot do](Module%205%20-%20Standards%20and%20Governance%20Kit/WHAT_IT_CAN_AND_CANNOT_DO.md)) and **standards-anchoring** (every rule cites an OWASP ID). No neon-hacker theatre — just controls that are a joy to adopt.
+
+## 📦 What's in the bundle
+
+<p align="center"><img src="docs/assets/slide-3-modules.png" alt="Five kits, one engine" width="100%"></p>
+
+Five audience-facing **module kits**, all powered by one shared, zero-dependency engine:
+
+| Kit | For | Start here |
 |---|---|---|
-| 🔍 | **Scanner** (`gp scan`) | ~20 high-precision rules for AI/agent/MCP risks, each citing an OWASP ID. Outputs **Markdown**, **JSON**, and **SARIF** (renders inline in VS Code + GitHub code scanning). |
-| 🧰 | **SDK** (drop-in) | `PromptGuardrail`, `DLPScanner`, `OutputGuardrail`, `SecureContextBuilder`, `AgentSecurityWrapper`, `AuditLogger`, plus **MCP** (`McpServerGuard`, manifest pinning) and **ACS** (`Guardian`, AgBOM). |
-| 🤖 | **MCP server** (`gp mcp`) | Grey Panda *secures* MCP — and ships **as** an MCP server, so Claude Code, Cursor, Windsurf, or VS Code can call it while you code. |
-| ✅ | **AISVS verify** (`gp verify`) | Check a codebase against AISVS **Level 1 / 2 / 3** and produce a signable report. |
-| 🛡️ | **CI/CD + governance** | One-command GitHub Action, pre-commit hook, AppSec reviewer guide, and OWASP Threat Dragon templates. |
+| 🧰 **[Module 1 — Developer Kit](Module%201%20-%20Developer%20Kit)** | Building AI features | Drop-in SDK + IDE integration |
+| 🛡️ **[Module 2 — Security Reviewer Kit](Module%202%20-%20Security%20Reviewer%20Kit)** | Reviewing / gating | AISVS verify, threat models, sign-off |
+| 🔍 **[Module 3 — Scanner & CI/CD Kit](Module%203%20-%20Scanner%20and%20CI-CD%20Kit)** | Platform / DevOps | 26 rules, SARIF, GitHub Action |
+| 🤖 **[Module 4 — MCP & Agent Security Kit](Module%204%20-%20MCP%20and%20Agent%20Security%20Kit)** | Agents & MCP | Rule of Two, HITL, manifest pinning, ACS |
+| 📚 **[Module 5 — Standards & Governance Kit](Module%205%20-%20Standards%20and%20Governance%20Kit)** | Everyone / compliance | Knowledge pack, mappings, Can/Cannot-Do |
 
-### See it work: before → after
+## ⚙️ How it works
 
-```bash
-gp scan examples/vulnerable_app --profile enterprise    # 🔴 7 critical · 🟠 7 high
-gp scan examples/secure_app     --profile enterprise    # ✅ no findings
-```
+<p align="center"><img src="docs/assets/slide-4-pipeline.png" alt="A 7-step request pipeline" width="100%"></p>
 
-The two example apps are line-for-line comparable — [`vulnerable_app`](examples/vulnerable_app/app.py) is what insecure AI code looks like; [`secure_app`](examples/secure_app/app.py) is the same app rebuilt with Grey Panda controls. A sample finding:
+Defense in depth, not prevention theatre. Full walkthrough: **[HOW-TO-add-guardrails](Module%201%20-%20Developer%20Kit/HOW-TO-add-guardrails.md)** · architecture: **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**.
 
-```markdown
-### 🔴 `GP-AI-001` User input interpolated directly into a prompt string
-**OWASP:** LLM01:2026  ·  **Severity:** CRITICAL  ·  `app.py:30`
+## 🔐 Standards-anchored
 
-- **Issue:** Untrusted user input is f-string-ed straight into a prompt, collapsing
-  the boundary between instructions and data.
-- **Fix:** Build context with SecureContextBuilder.add_user(); never f-string user input into a prompt.
-- **SDK:** `from greypanda import SecureContextBuilder`
-```
+<p align="center"><img src="docs/assets/slide-5-standards.png" alt="Standards anchored, not opinion-driven" width="100%"></p>
 
-## 🔐 Standards-anchored, not opinion-driven
-
-Every rule, checklist item, and SDK control cites a specific ID. No bare assertions.
-
-| Standard | Coverage |
-|---|---|
-| **OWASP Top 10 for LLM Applications 2026** | `LLM01`–`LLM10` |
-| **OWASP GenAI Data Security 2026** | `DSGAI01`–`DSGAI21` |
-| **OWASP Top 10 for Agentic Applications 2026** | `ASI01`–`ASI10` |
-| **OWASP AI Security Verification Standard (AISVS)** | `C1`–`C12`, Levels L1/L2/L3 |
-| **OWASP Secure MCP Server Development** + **Third-Party MCP** | 8 control domains + minimum bar |
-| **Agent Control Standard (ACS)** | Guardian hooks, 5 dispositions, AgBOM |
-| **NIST AI 100-2**, **Meta "Rule of Two"** / lethal trifecta | Deterministic mediation, agent design constraint |
-
-Full mapping tables live in [`docs/mappings/`](docs/mappings). Explore any control from the CLI:
+Every rule, checklist item, and SDK control cites a specific ID. Explore any control from the CLI:
 
 ```bash
 gp standards LLM01:2026      # explain a control + its Grey Panda fix
 gp standards                 # list every standard and control ID
 ```
 
-## 🤝 In your IDE: the MCP server
+Full mapping tables: **[Module 5 → mappings/](Module%205%20-%20Standards%20and%20Governance%20Kit/mappings)**.
 
-Register Grey Panda once and call it from your AI editor while you code:
+## ✅ Proof
 
-```jsonc
-// Claude Code / Cursor / Windsurf MCP config
-{ "mcpServers": { "grey-panda": { "command": "gp", "args": ["mcp"] } } }
-```
+<p align="center"><img src="docs/assets/slide-6-proof.png" alt="Spotless by construction — scans itself clean" width="100%"></p>
 
-Then ask your assistant to `review this file with grey panda` or `explain LLM03`. Exposed tools: `greypanda_scan_path`, `greypanda_review_snippet`, `greypanda_explain_risk`, `greypanda_list_standards`, `greypanda_checklist`.
-
-## 👥 One tool, three audiences
-
-Same safety floor for everyone; the **profile scales the process, not the safety**.
-
-| Profile | For | Gate |
-|---|---|---|
-| `solo` | Indie / solo devs | High-signal core rules, fail on **CRITICAL** |
-| `team` | Startups & teams | + DLP, RAG isolation, logging, MCP, shadow-AI · fail on **HIGH** |
-| `enterprise` | Regulated / large orgs | Every rule + AppSec gate + AISVS L1/L2/L3 · fail on **HIGH** |
+See the before/after for yourself — the same app, insecure vs. rebuilt with Grey Panda controls:
 
 ```bash
-gp scan . --profile solo
-gp init  . --profile team          # scaffold config + GitHub Action + pre-commit
-gp verify . --level 2              # AISVS Level 2 verification report
+gp scan examples/vulnerable_app --profile enterprise    # 🔴 findings
+gp scan examples/secure_app     --profile enterprise    # ✅ clean
 ```
 
-## 🏛️ Architecture
+## 👥 For everyone
 
-```
-                          🐼 GREY PANDA
-   ┌──────────────────────────────────────────────────────────┐
-   │  standards/ knowledge pack — every OWASP/AISVS/ACS/MCP    │
-   │  control ID → fix → citation (one source of truth)        │
-   └──────────────────────────────────────────────────────────┘
-        │                     │                      │
-   ┌────▼─────┐         ┌─────▼──────┐        ┌──────▼───────┐
-   │ SCANNER  │         │    SDK     │        │ INTEGRATIONS │
-   │ gp scan  │         │ guardrails │        │ Claude/Cursor│
-   │ md/json/ │         │ dlp/context│        │ skill        │
-   │ SARIF    │         │ agent/audit│        │ MCP server   │
-   │ GP-AI-## │         │ mcp / acs  │        │ GitHub Action│
-   └────┬─────┘         └─────┬──────┘        └──────┬───────┘
-        │                     │                      │
-   ┌────▼─────────────────────▼──────────────────────▼────────┐
-   │  DEVELOPER → CI/CD GATE → APPSEC REVIEW → PRODUCTION      │
-   └───────────────────────────────────────────────────────────┘
+<p align="center"><img src="docs/assets/slide-7-audiences.png" alt="Same safety floor, scaled process" width="100%"></p>
+
+```bash
+gp scan . --profile solo          # high-signal core, fail on CRITICAL
+gp init  . --profile team         # scaffold config + GitHub Action + pre-commit
+gp verify . --level 2             # AISVS Level 2 verification report
 ```
 
-See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for the full design.
+More: **[Module 1 → PROFILES](Module%201%20-%20Developer%20Kit/PROFILES.md)**.
 
-## 🧭 Honest about limits
+## 🚀 Get started
 
-Grey Panda is a **strong floor, not a ceiling**. Pattern matching cannot stop *all* prompt injection; regex DLP is language-specific; static analysis has false positives and negatives. We ship a whole document about exactly what Grey Panda **can and cannot do**, with confidence levels and failure conditions for every capability: **[docs/WHAT_IT_CAN_AND_CANNOT_DO.md](docs/WHAT_IT_CAN_AND_CANNOT_DO.md)**. Read it before you rely on the tool.
-
-## 📦 Install
+<p align="center"><img src="docs/assets/slide-8-start.png" alt="Two minutes to safer AI" width="100%"></p>
 
 ```bash
 pip install grey-panda           # from PyPI
 pipx install grey-panda          # isolated CLI
 uvx grey-panda scan .            # zero-install run
 ```
-
-Or from source:
-
-```bash
-git clone https://github.com/greypanda/grey-panda && cd grey-panda
-pip install -e ".[dev]"
-python -m unittest discover -s tests    # 69 tests, zero deps
-```
-
-## 🗺️ Command reference
 
 | Command | Does |
 |---|---|
@@ -187,16 +145,35 @@ python -m unittest discover -s tests    # 69 tests, zero deps
 | `gp mcp` | Run Grey Panda as an MCP server (stdio) |
 | `gp doctor` | Environment self-check + honest-limits pointer |
 
+## 🤝 In your IDE
+
+Grey Panda *secures* MCP — and ships **as** an MCP server, so Claude Code, Cursor, Windsurf, or VS Code can call it while you code:
+
+```jsonc
+{ "mcpServers": { "grey-panda": { "command": "gp", "args": ["mcp"] } } }
+```
+
+Then ask your assistant to *"review this file with grey panda"* or *"explain LLM03"*. Details: **[Module 1 → HOW-TO-use-in-your-ide](Module%201%20-%20Developer%20Kit/HOW-TO-use-in-your-ide.md)** and **[Module 4 → HOW-TO-run-the-mcp-server](Module%204%20-%20MCP%20and%20Agent%20Security%20Kit/HOW-TO-run-the-mcp-server.md)**.
+
+## 🧭 Honest about limits
+
+Grey Panda is a **strong floor, not a ceiling**. Pattern matching cannot stop *all* prompt injection; regex DLP is language-specific; static analysis has false positives and negatives. We ship a whole document — with a confidence level and failure condition for **every** capability: **[WHAT_IT_CAN_AND_CANNOT_DO.md](Module%205%20-%20Standards%20and%20Governance%20Kit/WHAT_IT_CAN_AND_CANNOT_DO.md)**. Read it before you rely on the tool.
+
 ## 🌱 Contributing
 
-Grey Panda is built to be extended — adding a scanner rule is editing one dataclass with a bad + good example. See [CONTRIBUTING.md](CONTRIBUTING.md) and the [`good first issue`](https://github.com/greypanda/grey-panda/labels/good%20first%20issue) label. Everyone is welcome under our [Code of Conduct](CODE_OF_CONDUCT.md).
+Adding a scanner rule is editing **one dataclass** with a bad + good example — see **[CONTRIBUTING.md](CONTRIBUTING.md)** and **[Module 3 → HOW-TO-write-a-rule](Module%203%20-%20Scanner%20and%20CI-CD%20Kit/HOW-TO-write-a-rule.md)**. Everyone is welcome under our [Code of Conduct](CODE_OF_CONDUCT.md). Found a vulnerability in Grey Panda itself? See [SECURITY.md](SECURITY.md).
 
-Found a security issue in Grey Panda itself? See [SECURITY.md](SECURITY.md).
+Build from source:
+
+```bash
+git clone https://github.com/dibakshya01/grey-panda && cd grey-panda
+pip install -e ".[dev]"
+python -m unittest discover -s tests        # zero-dependency test suite
+gp scan . --profile enterprise --fail-on HIGH   # Grey Panda scans itself, clean
+```
 
 ## 📄 License
 
 [Apache-2.0](LICENSE). Standards cited are the property of their respective authors (see [NOTICE](NOTICE)). OWASP® is a registered trademark of the OWASP Foundation; Grey Panda is an independent, community project and is not affiliated with or endorsed by OWASP.
 
-<div align="center">
-<sub>🐼 Grey Panda — make the secure path the easy path.</sub>
-</div>
+<p align="center"><sub>🐼 <b>Grey Panda</b> — make the secure path the easy path.</sub></p>

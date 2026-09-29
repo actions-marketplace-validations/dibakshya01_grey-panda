@@ -340,6 +340,93 @@ RULES: list[Rule] = [
         sdk="",
         profiles=("enterprise",),
     ),
+
+    # -------------------- LLM10 / ASI05 additional sinks ----------------- #
+    Rule(
+        id="GP-AI-020",
+        owasp_id="LLM10:2026",
+        severity=HIGH,
+        title="Unsafe deserialization of untrusted / model-influenced data",
+        description="pickle.loads / yaml.load / marshal.loads on data that may be "
+                    "attacker- or model-influenced enables arbitrary code execution.",
+        remediation="Use yaml.safe_load; avoid pickle for untrusted data; validate and "
+                    "sign any serialized payload before loading.",
+        pattern=r"""(?ix)\b(?:pickle\.loads|cPickle\.loads|marshal\.loads|yaml\.load)\s*\(""",
+        suppress=r"Loader\s*=\s*(?:yaml\.)?SafeLoader|safe_load",
+        sdk="",
+    ),
+    Rule(
+        id="GP-AGT-008",
+        owasp_id="ASI05",
+        severity=HIGH,
+        title="Shell command executed with shell=True and an interpolated value",
+        description="subprocess with shell=True and a variable/f-string command is a "
+                    "classic command-injection sink — acute when the value derives from "
+                    "model or tool output.",
+        remediation="Avoid shell=True; pass an argument list and use shlex.quote; validate "
+                    "any model-provided arguments against a schema/allowlist.",
+        pattern=r"""(?ix)subprocess\.(?:run|call|check_output|Popen)\s*\([^\n]*shell\s*=\s*True""",
+        suppress=r"shlex\.quote|#\s*grey-?panda:\s*ignore",
+        sdk="from greypanda import McpServerGuard",
+    ),
+    Rule(
+        id="GP-AI-021",
+        owasp_id="LLM10:2026",
+        severity=HIGH,
+        title="Model output rendered through a server-side template",
+        description="Model output passed to render_template_string / Template(...).render "
+                    "can enable server-side template injection and XSS.",
+        remediation="Never build templates from model output; render model text as data "
+                    "with autoescaping and OutputGuardrail.sanitize().",
+        pattern=r"""(?ix)(?:render_template_string|Template\([^\n]*\)\.render|Environment\([^\n]*\)\.from_string)\s*\([^\n]*(?:llm|response|completion|ai_|model_output|answer)""",
+        sdk="from greypanda import OutputGuardrail",
+    ),
+
+    # -------------------- Info leakage / error handling ------------------ #
+    Rule(
+        id="GP-AI-022",
+        owasp_id="LLM08:2026",
+        severity=MEDIUM,
+        title="Exception detail or stack trace returned to the caller",
+        description="Returning str(exception) or a traceback to clients leaks internal "
+                    "logic, paths, and tool internals, aiding targeted attacks.",
+        remediation="Return a generic error to the caller; log details server-side only. "
+                    "Never expose stack traces or tool internals in responses.",
+        pattern=r"""(?ix)(?:return|jsonify|JSONResponse|HTTPException|raise\s+HTTPException)\b[^\n]*(?:traceback\.format_exc|str\(\s*(?:e|ex|exc|err|error)\s*\)|repr\(\s*(?:e|ex|exc|err|error)\s*\))""",
+        sdk="",
+        profiles=("team", "enterprise"),
+    ),
+
+    # -------------------- MCP / agent hardening -------------------------- #
+    Rule(
+        id="GP-MCP-005",
+        owasp_id="AISVS C10",
+        severity=MEDIUM,
+        title="Server bound to all network interfaces (0.0.0.0)",
+        description="Binding an MCP/dev server to 0.0.0.0 exposes it beyond localhost, "
+                    "widening the attack surface for a tool/agent endpoint.",
+        remediation="Bind local MCP servers to 127.0.0.1; only expose remotely behind TLS "
+                    "+ OAuth 2.1 and an explicit allowlist.",
+        pattern=r"""(?ix)(?:host\s*=\s*|bind\s*=\s*|['"])0\.0\.0\.0(?:['"]|\s*[,:])""",
+        suppress=r"#\s*grey-?panda:\s*ignore",
+        file_globs=("*.py", "*.js", "*.ts", "*.yaml", "*.yml", "*.toml", "*.env"),
+        sdk="",
+        profiles=("team", "enterprise"),
+    ),
+    Rule(
+        id="GP-AGT-009",
+        owasp_id="ASI07",
+        severity=MEDIUM,
+        title="Inter-agent message handled without authentication",
+        description="A handler consumes an inter-agent/tool message without verifying its "
+                    "origin or signature — forged instructions can drive lateral movement.",
+        remediation="Authenticate and verify inter-agent messages (signatures/JWT); apply "
+                    "the ACS wire format with signing.",
+        pattern=r"""(?ix)\bdef\s+(?:on_message|handle_message|handle_agent_message|receive_message|on_agent_message)\s*\(""",
+        suppress=r"verify|signature|authenticate|hmac|jwt|\.sign",
+        sdk="from greypanda import Guardian",
+        profiles=("team", "enterprise"),
+    ),
 ]
 
 

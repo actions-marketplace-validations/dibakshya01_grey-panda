@@ -33,8 +33,8 @@ gp scan   . --profile enterprise
 gp verify . --level 2
 ```
 Everything on, including MEDIUM cost/consumption and agent-memory checks, plus the
-AppSec reviewer workflow and AISVS verification. Pair with
-[`appsec/APPSEC_REVIEWER_GUIDE.md`](../appsec/APPSEC_REVIEWER_GUIDE.md).
+AppSec reviewer workflow and AISVS verification. Pair with the
+[AppSec Reviewer Guide](../Module%202%20-%20Security%20Reviewer%20Kit/APPSEC_REVIEWER_GUIDE.md).
 
 ## Configuring
 `gp init` writes a `.greypanda.toml` you can commit:

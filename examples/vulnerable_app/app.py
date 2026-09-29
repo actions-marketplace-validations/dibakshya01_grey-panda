@@ -76,5 +76,34 @@ def run_mcp_tool(arguments):
     return subprocess.run(arguments["command"], shell=True)
 
 
+def load_agent_state(blob):
+    import pickle
+    # GP-AI-020: unsafe deserialization of untrusted data
+    return pickle.loads(blob)
+
+
+def render(llm_response):
+    from flask import render_template_string
+    # GP-AI-021: model output rendered through a server-side template
+    return render_template_string("<h1>" + llm_response + "</h1>", response=llm_response)
+
+
+def handle_request():
+    try:
+        return ask_llm("hi")
+    except Exception as e:
+        # GP-AI-022: exception detail returned to the caller
+        return {"error": str(e)}
+
+
+def start_server():
+    # GP-MCP-005: server bound to all interfaces
+    app_run(host="0.0.0.0", port=8080)
+
+
+def app_run(**kwargs):
+    raise NotImplementedError
+
+
 def get_vector_store():
     raise NotImplementedError

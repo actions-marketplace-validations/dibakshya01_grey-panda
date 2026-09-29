@@ -5,7 +5,7 @@ Grey Panda is a security tool; we hold ourselves to the standard we advocate.
 ## Reporting a vulnerability
 **Please do not open a public issue for security vulnerabilities.**
 
-Report privately via [GitHub Security Advisories](https://github.com/greypanda/grey-panda/security/advisories/new).
+Report privately via [GitHub Security Advisories](https://github.com/dibakshya01/grey-panda/security/advisories/new).
 If that is unavailable to you, open a minimal issue asking a maintainer to open a
 private channel — without any exploit details.
 

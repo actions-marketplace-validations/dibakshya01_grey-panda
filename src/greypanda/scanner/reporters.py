@@ -40,7 +40,7 @@ def report_markdown(findings: list[Finding], scan_path: str, elapsed: float, pro
         lines.append("✅ **No findings.** Baseline AI security controls appear to be in place.")
         lines.append("")
         lines.append("> Grey Panda is static analysis and a floor, not a ceiling. See "
-                     "`docs/WHAT_IT_CAN_AND_CANNOT_DO.md` and complete the checklist.")
+                     "`WHAT_IT_CAN_AND_CANNOT_DO.md` and complete the checklist.")
         return "\n".join(lines)
 
     lines.append("---")
@@ -62,7 +62,7 @@ def report_markdown(findings: list[Finding], scan_path: str, elapsed: float, pro
     lines.append("---")
     lines.append("**Next steps:** 1) fix 🔴/🟠 before merge  ·  2) adopt the SDK controls "
                  "shown above  ·  3) run `gp checklist`  ·  4) for agentic/MCP features, "
-                 "complete an AppSec review (`appsec/APPSEC_REVIEWER_GUIDE.md`).")
+                 "complete an AppSec review (`APPSEC_REVIEWER_GUIDE.md`).")
     out = "\n".join(lines)
     if len(out) > _PR_COMMENT_LIMIT:
         out = out[:_PR_COMMENT_LIMIT] + "\n\n> …report truncated for size. Run locally or read the JSON artifact for the full list."
@@ -103,7 +103,7 @@ def report_sarif(findings: list[Finding], scan_path: str, elapsed: float, profil
             "name": r.title.replace(" ", ""),
             "shortDescription": {"text": r.title},
             "fullDescription": {"text": r.description},
-            "helpUri": "https://github.com/greypanda/grey-panda/blob/main/docs/mappings",
+            "helpUri": "https://github.com/dibakshya01/grey-panda/blob/main/the standards mappings",
             "help": {"text": f"{r.remediation} (OWASP {r.owasp_id})"},
             "defaultConfiguration": {"level": _SARIF_LEVEL.get(r.severity, "warning")},
             "properties": {"security-severity": _security_severity(r.severity), "owasp": r.owasp_id},
@@ -130,7 +130,7 @@ def report_sarif(findings: list[Finding], scan_path: str, elapsed: float, profil
         "runs": [{
             "tool": {"driver": {
                 "name": "Grey Panda",
-                "informationUri": "https://github.com/greypanda/grey-panda",
+                "informationUri": "https://github.com/dibakshya01/grey-panda",
                 "version": __version__,
                 "rules": list(seen.values()),
             }},

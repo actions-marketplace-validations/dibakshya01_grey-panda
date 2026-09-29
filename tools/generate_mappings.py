@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Regenerate docs/mappings/*.md from the packaged standards knowledge pack.
+Regenerate "Module 5 - Standards and Governance Kit/mappings/*.md" from the pack.
 
     PYTHONPATH=src python tools/generate_mappings.py
 
@@ -17,7 +17,9 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 from greypanda.data import load_standard  # noqa: E402
 
-OUT = os.path.join(os.path.dirname(__file__), "..", "docs", "mappings")
+OUT = os.path.join(
+    os.path.dirname(__file__), "..", "Module 5 - Standards and Governance Kit", "mappings"
+)
 
 FLAT = {
     "owasp-llm-top10": "OWASP_LLM_TOP10.md",

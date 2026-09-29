@@ -13,8 +13,8 @@ How each control in this standard maps to a Grey Panda SDK control and/or scanne
 | `LLM05:2026` | Data and Model Poisoning | — | — |
 | `LLM06:2026` | Unbounded Consumption | `AgentSecurityWrapper`, `ToolPermission` | `GP-AI-012` |
 | `LLM07:2026` | Misinformation | `OutputGuardrail` | — |
-| `LLM08:2026` | Hidden Context Exposure | `SecureContextBuilder` | `GP-AI-008` |
+| `LLM08:2026` | Hidden Context Exposure | `SecureContextBuilder` | `GP-AI-008`, `GP-AI-022` |
 | `LLM09:2026` | Vector and Embedding Weaknesses | `SecureContextBuilder` | `GP-AI-009`, `GP-AGT-007` |
-| `LLM10:2026` | Improper Output Handling | `OutputGuardrail` | `GP-AI-004`, `GP-AI-014` |
+| `LLM10:2026` | Improper Output Handling | `OutputGuardrail` | `GP-AI-004`, `GP-AI-014`, `GP-AI-020`, `GP-AI-021` |
 
 > Generated from `src/greypanda/data/standards/`. Run `gp standards <ID>` to explain any control.

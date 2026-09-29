@@ -47,7 +47,7 @@ AISVS entries additionally carry `level` and a `requirements` list with per-
 requirement `level` and `verify` (`scanner` / `sdk` / `manual`).
 
 ## Human-readable mappings
-See [`../docs/mappings/`](../docs/mappings) for generated tables. Regenerate them
+See [`Module 5 → mappings/`](../Module%205%20-%20Standards%20and%20Governance%20Kit/mappings) for generated tables. Regenerate them
 after editing any JSON:
 ```bash
 PYTHONPATH=src python tools/generate_mappings.py

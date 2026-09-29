@@ -8,7 +8,7 @@ Addresses:
     * AISVS C2  Input Validation
     * AISVS C7  Model Behavior, Output Control & Safety Assurance
 
-Design honesty (see docs/WHAT_IT_CAN_AND_CANNOT_DO.md):
+Design honesty (see WHAT_IT_CAN_AND_CANNOT_DO.md):
     Pattern matching CANNOT stop all prompt injection. It blocks *known* patterns
     cheaply at the edge so that the expensive, deeper controls (data quarantine,
     least-privilege agents, audit) are not the only line of defence. Treat this as

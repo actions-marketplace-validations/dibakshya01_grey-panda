@@ -59,10 +59,10 @@ gp verify <service_dir> --level 2 -o aisvs-l2.md
 ```
 
 ### 3. Follow the reviewer guide
-See [`appsec/APPSEC_REVIEWER_GUIDE.md`](../appsec/APPSEC_REVIEWER_GUIDE.md): scanner review → manual threat-model review → utility checks (injection battery, RAG isolation, DLP output) → OWASP Threat Dragon model → sign-off.
+See the [AppSec Reviewer Guide](../Module%202%20-%20Security%20Reviewer%20Kit/APPSEC_REVIEWER_GUIDE.md): scanner review → manual threat-model review → utility checks (injection battery, RAG isolation, DLP output) → OWASP Threat Dragon model → sign-off.
 
 ### 4. Import the threat model
-Load [`appsec/threat-models/sample-agentic-system.json`](../appsec/threat-models/sample-agentic-system.json) into OWASP Threat Dragon and adapt it to the feature's real architecture.
+Load the [threat-model template](../Module%202%20-%20Security%20Reviewer%20Kit/threat-models/sample-agentic-system.json) into OWASP Threat Dragon and adapt it to the feature's real architecture.
 
 ### 5. Sign off
 Use the sign-off template in the reviewer guide. Any 🔴 Critical blocks the release.
@@ -76,4 +76,4 @@ gp scan ./services/payments --profile enterprise --format json -o payments.json
 ```
 
 ## Honest limits
-Before you rely on any of this, read [WHAT_IT_CAN_AND_CANNOT_DO.md](WHAT_IT_CAN_AND_CANNOT_DO.md).
+Before you rely on any of this, read [WHAT_IT_CAN_AND_CANNOT_DO.md](../Module%205%20-%20Standards%20and%20Governance%20Kit/WHAT_IT_CAN_AND_CANNOT_DO.md).

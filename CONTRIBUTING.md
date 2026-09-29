@@ -11,10 +11,10 @@ control, or improves the docs. This project is built to be *easy to extend*.
 
 ## Dev setup
 ```bash
-git clone https://github.com/greypanda/grey-panda && cd grey-panda
+git clone https://github.com/dibakshya01/grey-panda && cd grey-panda
 python -m pip install -e ".[dev]"
-python -m unittest discover -s tests -v      # 69 tests, zero runtime deps
-gp scan src --profile enterprise --fail-on HIGH   # dogfood: Grey Panda scans itself
+python -m unittest discover -s tests -v      # zero-dependency test suite
+gp scan . --profile enterprise --fail-on HIGH    # dogfood: Grey Panda scans itself
 ```
 
 ## Add a scanner rule (the most common contribution)
@@ -47,6 +47,6 @@ Edit the JSON in `src/greypanda/data/standards/`, keep the entry schema (see
 - Conventional-ish commit messages are appreciated (`feat:`, `fix:`, `docs:`, `rule:`).
 
 ## Good first issues
-Look for the [`good first issue`](https://github.com/greypanda/grey-panda/labels/good%20first%20issue)
+Look for the [`good first issue`](https://github.com/dibakshya01/grey-panda/labels/good%20first%20issue)
 label — adding a new rule from the [`new_rule`](.github/ISSUE_TEMPLATE/new_rule.yml)
 template is a great start.

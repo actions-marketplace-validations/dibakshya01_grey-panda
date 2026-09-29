@@ -9,9 +9,14 @@ All notable changes to Grey Panda are documented here. The format is based on
 The first public release. 🐼
 
 ### Added
-- **Scanner** (`gp scan`) — high-precision rules for AI, agent, and MCP risks, each
-  citing an OWASP ID, with false-positive suppress guards. Outputs **Markdown**,
-  **JSON**, and **SARIF 2.1.0** (renders inline in VS Code + GitHub code scanning).
+- **Five module kits** — the bundle is organised into audience-facing kits
+  (Developer, Security Reviewer, Scanner & CI/CD, MCP & Agent Security, Standards &
+  Governance), each with its own friendly README and how-to guides, all powered by
+  one shared zero-dependency engine.
+- **Scanner** (`gp scan`) — **26 high-precision rules** for AI, agent, and MCP risks,
+  each citing an OWASP ID, with false-positive suppress guards and per-line /
+  per-file ignores. Outputs **Markdown**, **JSON**, and **SARIF 2.1.0** (renders
+  inline in VS Code + GitHub code scanning).
 - **SDK** (zero dependencies) — `PromptGuardrail`, `OutputGuardrail`, `DLPScanner`,
   `SecureContextBuilder`, `AgentSecurityWrapper` (Rule of Two, HITL, kill switch,
   call budgets), `AuditLogger`, plus **MCP** controls (`McpToolManifest`,
@@ -32,6 +37,6 @@ The first public release. 🐼
 - **Docs** — README, Quickstart, Profiles, Architecture, standards mappings, and the
   signature **What It Can and Cannot Do** honesty document.
 - **Examples** — `vulnerable_app` (flagged) vs `secure_app` (clean) and a full SDK tour.
-- **Tests** — 69 zero-dependency `unittest` tests.
+- **Tests** — 76 zero-dependency `unittest` tests; Grey Panda scans its own repo clean in CI.
 
-[1.0.0]: https://github.com/greypanda/grey-panda/releases/tag/v1.0.0
+[1.0.0]: https://github.com/dibakshya01/grey-panda/releases/tag/v1.0.0

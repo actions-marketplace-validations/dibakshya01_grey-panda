@@ -37,7 +37,8 @@
       "title": "Unexpected Code Execution (RCE)",
       "description": "Model or tool input reaches a code/shell/eval sink and executes arbitrary code.",
       "remediation": "Never pass model input to a shell/eval; validate against schema; sandbox tool execution in containers.",
-      "grey_panda_controls": ["McpServerGuard"]
+      "grey_panda_controls": ["McpServerGuard"],
+      "scanner_rules": ["GP-MCP-002", "GP-AGT-008"]
     },
     {
       "id": "ASI06",
@@ -51,7 +52,8 @@
       "title": "Insecure Inter-Agent Communication",
       "description": "Messages between agents are trusted without authentication, allowing forged instructions and lateral movement.",
       "remediation": "Authenticate inter-agent messages; sign and verify payloads; use the ACS wire format with signing.",
-      "grey_panda_controls": ["Guardian"]
+      "grey_panda_controls": ["Guardian"],
+      "scanner_rules": ["GP-AGT-009"]
     },
     {
       "id": "ASI08",

@@ -70,7 +70,7 @@ def cmd_scan(args: argparse.Namespace) -> int:
 # --------------------------------------------------------------------------- #
 # init
 # --------------------------------------------------------------------------- #
-_CONFIG_TEMPLATE = """# Grey Panda configuration — https://github.com/greypanda/grey-panda
+_CONFIG_TEMPLATE = """# Grey Panda configuration — https://github.com/dibakshya01/grey-panda
 [greypanda]
 profile = "{profile}"     # solo | team | enterprise
 fail_on = "{fail_on}"     # CRITICAL | HIGH | MEDIUM | LOW
@@ -178,13 +178,9 @@ def cmd_verify(args: argparse.Namespace) -> int:
 # checklist
 # --------------------------------------------------------------------------- #
 def cmd_checklist(args: argparse.Namespace) -> int:
-    for parent in Path(__file__).resolve().parents:
-        candidate = parent / "docs" / "AI_SECURITY_CHECKLIST.md"
-        if candidate.exists():
-            _print(candidate.read_text(encoding="utf-8"))
-            return 0
-    _print("Checklist not found next to the package. See "
-           "https://github.com/greypanda/grey-panda/blob/main/docs/AI_SECURITY_CHECKLIST.md")
+    from ..data import load_checklist
+
+    _print(load_checklist())
     return 0
 
 
@@ -273,7 +269,7 @@ def cmd_doctor(args: argparse.Namespace) -> int:
     _print("")
     _print("Honest limits: Grey Panda is static analysis + drop-in guardrails — a strong")
     _print("floor, not a ceiling. It cannot stop all prompt injection or novel attacks.")
-    _print("See docs/WHAT_IT_CAN_AND_CANNOT_DO.md before you rely on it.")
+    _print("See WHAT_IT_CAN_AND_CANNOT_DO.md before you rely on it.")
     return 0 if ok else 1
 
 
@@ -284,7 +280,7 @@ def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
         prog="gp",
         description=f"{PANDA} Grey Panda — the calm guardian for AI, agent, and MCP code.",
-        epilog="Docs: https://github.com/greypanda/grey-panda",
+        epilog="Docs: https://github.com/dibakshya01/grey-panda",
     )
     p.add_argument("--version", action="version", version=f"Grey Panda {__version__}")
     sub = p.add_subparsers(dest="command", required=True)
