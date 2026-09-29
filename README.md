@@ -28,6 +28,10 @@
   <a href="CONTRIBUTING.md">Contributing</a>
 </p>
 
+<p align="center">
+  <img src="docs/assets/demo.gif" alt="Grey Panda in action: scan a vulnerable app, then the same app rebuilt clean" width="84%" />
+</p>
+
 ---
 
 > _"Stop trying to build a model that cannot be fooled. Build the system around it, so that when the model is fooled — and it will be — nothing important breaks."_
