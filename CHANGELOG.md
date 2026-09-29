@@ -4,6 +4,16 @@ All notable changes to Grey Panda are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.4] — 2026-09-30
+
+### Changed
+- **`GP-AI-003` ("no DLP before an LLM call") is now an enterprise-only, MEDIUM
+  advisory** (was a `team`+ HIGH rule). Whether a specific call's data was redacted
+  cannot be *proven* by static analysis without whole-program dataflow, so rather
+  than dress a proximity heuristic up as a precise finding, it surfaces as a note
+  that never gates a build. The real control is the runtime `DLPScanner` (or a
+  DLP-enforcing gateway). Docs/profiles updated accordingly.
+
 ## [1.0.3] — 2026-09-30
 
 Round-2 hardening, driven by a second adversarial review — and, crucially, an
@@ -108,6 +118,7 @@ The first public release. 🐼
 - **Examples** — `vulnerable_app` (flagged) vs `secure_app` (clean) and a full SDK tour.
 - **Tests** — 76 zero-dependency `unittest` tests; Grey Panda scans its own repo clean in CI.
 
+[1.0.4]: https://github.com/dibakshya01/grey-panda/releases/tag/v1.0.4
 [1.0.3]: https://github.com/dibakshya01/grey-panda/releases/tag/v1.0.3
 [1.0.2]: https://github.com/dibakshya01/grey-panda/releases/tag/v1.0.2
 [1.0.1]: https://github.com/dibakshya01/grey-panda/releases/tag/v1.0.1

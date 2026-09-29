@@ -28,14 +28,15 @@ PROFILES: dict[str, Profile] = {
     ),
     "team": Profile(
         name="team",
-        description="Team / startup. Adds DLP-before-call, RAG isolation, logging, MCP, and "
-                    "shadow-AI rules; fails a build on HIGH and above.",
+        description="Team / startup. Adds RAG isolation, no-raw-logging, MCP, and shadow-AI "
+                    "rules; fails a build on HIGH and above.",
         default_fail_on="HIGH",
     ),
     "enterprise": Profile(
         name="enterprise",
-        description="Enterprise / regulated. Every rule on, including MEDIUM cost/consumption "
-                    "and memory-poisoning checks; fails on HIGH and above.",
+        description="Enterprise / regulated. Every rule on, including MEDIUM advisories "
+                    "(cost/consumption, memory-poisoning, and the DLP-before-call reminder) "
+                    "that surface as notes; fails on HIGH and above.",
         default_fail_on="HIGH",
     ),
 }

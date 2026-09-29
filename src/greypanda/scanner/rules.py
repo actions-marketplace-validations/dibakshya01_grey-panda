@@ -102,16 +102,19 @@ RULES: list[Rule] = [
     Rule(
         id="GP-AI-003",
         owasp_id="LLM02:2026",
-        severity=HIGH,
-        title="LLM call without a preceding DLP scan",
-        description="A model call is made on input that has not been scanned for PII and "
-                    "secrets, risking sensitive-data leakage to the provider/logs.",
-        remediation="Run DLPScanner().redact(text) on inputs (and outputs) before the call.",
+        severity=MEDIUM,
+        title="LLM call may lack a preceding DLP scan (advisory)",
+        description="Advisory reminder: no nearby DLPScanner redact/scan was found before "
+                    "this model call. This is a proximity heuristic, not dataflow analysis — "
+                    "it cannot prove whether THIS call's data was redacted, so verify "
+                    "manually. Surfaced only in the enterprise profile and never gates a build.",
+        remediation="Run DLPScanner().redact(text) on inputs (and outputs) before the call, "
+                    "or route calls through a gateway that enforces DLP centrally.",
         pattern=r"""(?ix)\b(?:openai|anthropic|client|llm|bedrock|litellm|genai)\b[^\n]*?\.(?:chat|complete|completions|invoke|generate|messages)\b""",
         suppress=r"DLPScanner|\.redact\(|\.scan\(|assert_clean\(",
         suppress_window=8,
         sdk="from greypanda import DLPScanner",
-        profiles=("team", "enterprise"),
+        profiles=("enterprise",),
     ),
     Rule(
         id="GP-AI-010",

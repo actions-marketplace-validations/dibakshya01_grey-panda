@@ -7,8 +7,8 @@ gets the full gate. Pick a profile with `--profile` (default: `team`).
 | Profile | For | Active rules | Fails build on |
 |---|---|---|---|
 | `solo` | Indie / solo developers, prototypes, hackathons | High-signal core (CRITICAL + key HIGH) | **CRITICAL** |
-| `team` | Startups, product teams | + DLP-before-call, RAG isolation, logging, MCP, shadow-AI | **HIGH** |
-| `enterprise` | Regulated / large orgs | Every rule, incl. cost/consumption + memory-poisoning + AISVS L1/L2/L3 | **HIGH** |
+| `team` | Startups, product teams | + RAG isolation, no-raw-logging, MCP, shadow-AI | **HIGH** |
+| `enterprise` | Regulated / large orgs | Every rule + MEDIUM advisories (cost/consumption, memory-poisoning, DLP-before-call reminder) + AISVS L1/L2/L3 | **HIGH** |
 
 ## Solo
 ```bash

@@ -1,6 +1,6 @@
 # 🐼 Grey Panda — Scanner Rules Catalog
 
-**26 rules.** 🔴 7 Critical · 🟠 13 High · 🟡 6 Medium · ⚪ 0 Low
+**26 rules.** 🔴 7 Critical · 🟠 12 High · 🟡 7 Medium · ⚪ 0 Low
 
 Every rule cites a specific standard ID and points at the Grey Panda control that fixes it. Rules run per-profile (`solo` / `team` / `enterprise`) and can be silenced per-line with `# grey-panda: ignore` or per-file with `.greypandaignore`.
 
@@ -17,7 +17,6 @@ Every rule cites a specific standard ID and points at the Grey Panda control tha
 | `GP-MCP-002` | 🔴 | AISVS C10 / ASI05 | MCP tool passes model-provided input to a shell/eval sink | all | `from greypanda import McpServerGuard` |
 | `GP-AGT-006` | 🟠 | LLM03:2026 | Agent tool marked as not requiring human approval | team, enterprise | `from greypanda import ToolPermission` |
 | `GP-AGT-008` | 🟠 | ASI05 | Shell command executed with shell=True and an interpolated value | all | `from greypanda import McpServerGuard` |
-| `GP-AI-003` | 🟠 | LLM02:2026 | LLM call without a preceding DLP scan | team, enterprise | `from greypanda import DLPScanner` |
 | `GP-AI-007` | 🟠 | LLM04:2026 | Unpinned AI/agent dependency | all | — |
 | `GP-AI-008` | 🟠 | LLM08:2026 | System prompt returned in an API response | all | — |
 | `GP-AI-009` | 🟠 | LLM09:2026 | Vector store query without a user-scoped filter | team, enterprise | — |
@@ -30,6 +29,7 @@ Every rule cites a specific standard ID and points at the Grey Panda control tha
 | `GP-MCP-004` | 🟠 | AISVS C10 | Remote MCP endpoint configured over plaintext HTTP | team, enterprise | `from greypanda import McpServerGuard` |
 | `GP-AGT-007` | 🟡 | ASI06 | Agent memory write without validation/attribution | enterprise | — |
 | `GP-AGT-009` | 🟡 | ASI07 | Inter-agent message handled without authentication | team, enterprise | `from greypanda import Guardian` |
+| `GP-AI-003` | 🟡 | LLM02:2026 | LLM call may lack a preceding DLP scan (advisory) | enterprise | `from greypanda import DLPScanner` |
 | `GP-AI-012` | 🟡 | LLM06:2026 | Model call without an explicit token/output cap | enterprise | — |
 | `GP-AI-017` | 🟡 | LLM01:2026 | External/fetched content sent to the model without trust tagging | team, enterprise | `from greypanda import SecureContextBuilder` |
 | `GP-AI-022` | 🟡 | LLM08:2026 | Exception detail or stack trace returned to the caller | team, enterprise | — |
@@ -97,13 +97,6 @@ Every rule cites a specific standard ID and points at the Grey Panda control tha
 - **What:** subprocess with shell=True and a variable/f-string command is a classic command-injection sink — acute when the value derives from model or tool output.
 - **Fix:** Avoid shell=True; pass an argument list and use shlex.quote; validate any model-provided arguments against a schema/allowlist.
 - **SDK:** `from greypanda import McpServerGuard`
-
-### 🟠 `GP-AI-003` — LLM call without a preceding DLP scan
-*LLM02:2026 · HIGH*
-
-- **What:** A model call is made on input that has not been scanned for PII and secrets, risking sensitive-data leakage to the provider/logs.
-- **Fix:** Run DLPScanner().redact(text) on inputs (and outputs) before the call.
-- **SDK:** `from greypanda import DLPScanner`
 
 ### 🟠 `GP-AI-007` — Unpinned AI/agent dependency
 *LLM04:2026 · HIGH*
@@ -181,6 +174,13 @@ Every rule cites a specific standard ID and points at the Grey Panda control tha
 - **What:** A handler consumes an inter-agent/tool message without verifying its origin or signature — forged instructions can drive lateral movement.
 - **Fix:** Authenticate and verify inter-agent messages (signatures/JWT); apply the ACS wire format with signing.
 - **SDK:** `from greypanda import Guardian`
+
+### 🟡 `GP-AI-003` — LLM call may lack a preceding DLP scan (advisory)
+*LLM02:2026 · MEDIUM*
+
+- **What:** Advisory reminder: no nearby DLPScanner redact/scan was found before this model call. This is a proximity heuristic, not dataflow analysis — it cannot prove whether THIS call's data was redacted, so verify manually. Surfaced only in the enterprise profile and never gates a build.
+- **Fix:** Run DLPScanner().redact(text) on inputs (and outputs) before the call, or route calls through a gateway that enforces DLP centrally.
+- **SDK:** `from greypanda import DLPScanner`
 
 ### 🟡 `GP-AI-012` — Model call without an explicit token/output cap
 *LLM06:2026 · MEDIUM*

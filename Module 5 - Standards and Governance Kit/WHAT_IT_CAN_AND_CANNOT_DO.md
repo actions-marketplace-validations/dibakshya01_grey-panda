@@ -76,7 +76,7 @@ Security tools earn trust by being honest about their limits. This document list
 - **False positives** on benign code that matches trigger keywords.
 - **False negatives** on obfuscated or dynamically-constructed patterns (split strings, `getattr`, string building).
 - **Only lightweight taint tracking** — a function-scoped (`ast`-based), Python-only pass follows model-tainted variables into the highest-impact Python sinks (SQL/exec and server-side HTML like `mark_safe`). It is not full data-flow analysis: it does not cross function boundaries, and it does not run on JS/TS (a renamed model→`dangerouslySetInnerHTML` in `.tsx` is not caught by taint).
-- **`GP-AI-003` ("no DLP before an LLM call") is a proximity heuristic** — it suppresses when a `redact()`/`scan()` appears within a few lines, which models "did you DLP nearby," not true dataflow. Treat it as a reminder, not a proof.
+- **`GP-AI-003` ("no DLP before an LLM call") is an advisory only** — "was this call's data redacted?" can't be *proven* statically without whole-program dataflow, so rather than pretend otherwise it is scoped to the **enterprise** profile at **MEDIUM** severity (a note that never gates a build). The real control is the runtime `DLPScanner` (or a DLP-enforcing gateway) plus the checklist.
 
 ### MCP / ACS limitations
 - **Tool-poisoning marker detection is heuristic** — it catches known-bad phrasing, not cleverly disguised instructions.
