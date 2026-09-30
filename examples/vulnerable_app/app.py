@@ -101,6 +101,12 @@ def start_server():
     app_run(host="0.0.0.0", port=8080)
 
 
+def call_insecure_endpoint(url):
+    import requests
+    # GP-AI-023: disabled TLS certificate verification on outbound call
+    return requests.post(url, verify=False)
+
+
 def app_run(**kwargs):
     raise NotImplementedError
 

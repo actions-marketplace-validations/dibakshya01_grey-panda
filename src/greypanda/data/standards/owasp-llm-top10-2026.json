@@ -34,7 +34,7 @@
       "description": "Compromised or unvetted models, datasets, plugins, tool packages, or dependencies introduce vulnerabilities into the AI system.",
       "remediation": "Pin dependencies to exact versions; verify signatures/provenance; maintain an AIBOM/AgBOM; scan dependencies in CI.",
       "grey_panda_controls": ["agent_bill_of_materials"],
-      "scanner_rules": ["GP-AI-007"]
+      "scanner_rules": ["GP-AI-007", "GP-AI-023"]
     },
     {
       "id": "LLM05:2026",

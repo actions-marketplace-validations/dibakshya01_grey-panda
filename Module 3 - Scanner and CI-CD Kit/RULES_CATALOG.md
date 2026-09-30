@@ -1,6 +1,6 @@
 # 🐼 Grey Panda — Scanner Rules Catalog
 
-**26 rules.** 🔴 7 Critical · 🟠 12 High · 🟡 7 Medium · ⚪ 0 Low
+**27 rules.** 🔴 7 Critical · 🟠 13 High · 🟡 7 Medium · ⚪ 0 Low
 
 Every rule cites a specific standard ID and points at the Grey Panda control that fixes it. Rules run per-profile (`solo` / `team` / `enterprise`) and can be silenced per-line with `# grey-panda: ignore` or per-file with `.greypandaignore`.
 
@@ -24,6 +24,7 @@ Every rule cites a specific standard ID and points at the Grey Panda control tha
 | `GP-AI-013` | 🟠 | DSGAI03 | Direct call to an external AI provider endpoint (possible shadow AI) | team, enterprise | — |
 | `GP-AI-020` | 🟠 | LLM10:2026 | Unsafe deserialization of untrusted / model-influenced data | all | — |
 | `GP-AI-021` | 🟠 | LLM10:2026 | Model output rendered through a server-side template | all | `from greypanda import OutputGuardrail` |
+| `GP-AI-023` | 🟠 | LLM04:2026 | Disabled TLS certificate verification on outbound call | all | — |
 | `GP-MCP-001` | 🟠 | AISVS C10 / ASI04 | Possible tool-poisoning marker in an MCP tool description/docstring | all | `from greypanda import McpToolManifest, McpServerGuard` |
 | `GP-MCP-003` | 🟠 | AISVS C10 | MCP client token forwarded downstream (token passthrough / confused deputy) | team, enterprise | — |
 | `GP-MCP-004` | 🟠 | AISVS C10 | Remote MCP endpoint configured over plaintext HTTP | team, enterprise | `from greypanda import McpServerGuard` |
@@ -141,6 +142,12 @@ Every rule cites a specific standard ID and points at the Grey Panda control tha
 - **What:** Model output passed to render_template_string / Template(...).render can enable server-side template injection and XSS.
 - **Fix:** Never build templates from model output; render model text as data with autoescaping and OutputGuardrail.sanitize().
 - **SDK:** `from greypanda import OutputGuardrail`
+
+### 🟠 `GP-AI-023` — Disabled TLS certificate verification on outbound call
+*LLM04:2026 · HIGH*
+
+- **What:** An outbound HTTP/API or MCP client call disables TLS certificate verification (verify=False), exposing prompts, keys, and responses to man-in-the-middle interception.
+- **Fix:** Remove verify=False (or set verify=True / pass a trusted CA bundle path) so TLS certificates are validated on all outbound calls.
 
 ### 🟠 `GP-MCP-001` — Possible tool-poisoning marker in an MCP tool description/docstring
 *AISVS C10 / ASI04 · HIGH*

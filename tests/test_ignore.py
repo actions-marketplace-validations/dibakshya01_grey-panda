@@ -63,6 +63,40 @@ class TestRulePrecision(unittest.TestCase):
             findings = AISecurityScanner(profile="enterprise").scan_path(Path(td))
             self.assertTrue(any(f.rule_id == "GP-AI-011" for f in findings))
 
+    def test_disabled_tls_verify_flagged(self):
+        # GP-AI-023 must fire on outbound calls with verify=False.
+        with tempfile.TemporaryDirectory() as td:
+            p = Path(td) / "a.py"
+            p.write_text(
+                "import requests\nresp = requests.post(url, verify=False)\n",
+                encoding="utf-8",
+            )
+            findings = AISecurityScanner(profile="enterprise").scan_path(Path(td))
+            self.assertTrue(any(f.rule_id == "GP-AI-023" for f in findings))
+
+    def test_enabled_tls_verify_not_flagged(self):
+        # GP-AI-023 must not fire when TLS verification is enabled (default or verify=True).
+        with tempfile.TemporaryDirectory() as td:
+            p = Path(td) / "a.py"
+            p.write_text(
+                "import requests\nresp = requests.post(url, verify=True)  # SecureContextBuilder\n",
+                encoding="utf-8",
+            )
+            findings = AISecurityScanner(profile="enterprise").scan_path(Path(td))
+            self.assertFalse(any(f.rule_id == "GP-AI-023" for f in findings))
+
+    def test_unrelated_verify_false_not_flagged(self):
+        # GP-AI-023 targets HTTP client calls, not any unrelated `verify=` kwarg,
+        # so a non-network `verify=False` (e.g. a config/dataclass flag) is clean.
+        with tempfile.TemporaryDirectory() as td:
+            p = Path(td) / "a.py"
+            p.write_text(
+                "checker = SignatureChecker(verify=False)  # not a network call\n",
+                encoding="utf-8",
+            )
+            findings = AISecurityScanner(profile="enterprise").scan_path(Path(td))
+            self.assertFalse(any(f.rule_id == "GP-AI-023" for f in findings))
+
 
 if __name__ == "__main__":
     unittest.main()

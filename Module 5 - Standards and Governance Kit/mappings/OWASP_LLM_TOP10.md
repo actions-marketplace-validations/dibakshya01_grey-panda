@@ -9,7 +9,7 @@ How each control in this standard maps to a Grey Panda SDK control and/or scanne
 | `LLM01:2026` | Prompt Injection | `PromptGuardrail`, `SecureContextBuilder` | `GP-AI-001`, `GP-AI-002`, `GP-AI-017` |
 | `LLM02:2026` | Sensitive Information Disclosure | `DLPScanner`, `AuditLogger`, `OutputGuardrail` | `GP-AI-003`, `GP-AI-010`, `GP-AI-011` |
 | `LLM03:2026` | Excessive Agency | `AgentSecurityWrapper`, `ToolPermission`, `Guardian` | `GP-AGT-005`, `GP-AGT-006` |
-| `LLM04:2026` | Supply Chain | `agent_bill_of_materials` | `GP-AI-007` |
+| `LLM04:2026` | Supply Chain | `agent_bill_of_materials` | `GP-AI-007`, `GP-AI-023` |
 | `LLM05:2026` | Data and Model Poisoning | — | — |
 | `LLM06:2026` | Unbounded Consumption | `AgentSecurityWrapper`, `ToolPermission` | `GP-AI-012` |
 | `LLM07:2026` | Misinformation | `OutputGuardrail` | — |

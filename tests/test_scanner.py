@@ -41,7 +41,7 @@ class TestScannerOnExamples(unittest.TestCase):
         self.assertGreater(counts["CRITICAL"], 0)
         self.assertTrue(exceeds_threshold(findings, "HIGH"))
         rule_ids = {f.rule_id for f in findings}
-        for expected in ("GP-AI-001", "GP-AI-010", "GP-AI-004", "GP-AGT-005", "GP-MCP-002"):
+        for expected in ("GP-AI-001", "GP-AI-010", "GP-AI-004", "GP-AGT-005", "GP-MCP-002", "GP-AI-023"):
             self.assertIn(expected, rule_ids)
 
     def test_secure_app_is_clean(self):
