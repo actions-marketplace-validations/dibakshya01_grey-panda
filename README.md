@@ -97,7 +97,7 @@ Five audience-facing **module kits**, all powered by one shared, zero-dependency
 |---|---|---|
 | 🧰 **[Module 1 — Developer Kit](Module%201%20-%20Developer%20Kit)** | Building AI features | Drop-in SDK + IDE integration |
 | 🛡️ **[Module 2 — Security Reviewer Kit](Module%202%20-%20Security%20Reviewer%20Kit)** | Reviewing / gating | AISVS verify, threat models, sign-off |
-| 🔍 **[Module 3 — Scanner & CI/CD Kit](Module%203%20-%20Scanner%20and%20CI-CD%20Kit)** | Platform / DevOps | 26 rules, SARIF, GitHub Action |
+| 🔍 **[Module 3 — Scanner & CI/CD Kit](Module%203%20-%20Scanner%20and%20CI-CD%20Kit)** | Platform / DevOps | 27 rules, SARIF, GitHub Action |
 | 🤖 **[Module 4 — MCP & Agent Security Kit](Module%204%20-%20MCP%20and%20Agent%20Security%20Kit)** | Agents & MCP | Rule of Two, HITL, manifest pinning, ACS |
 | 📚 **[Module 5 — Standards & Governance Kit](Module%205%20-%20Standards%20and%20Governance%20Kit)** | Everyone / compliance | Knowledge pack, mappings, Can/Cannot-Do |
 
