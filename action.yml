@@ -1,5 +1,5 @@
 name: "Grey Panda AI Security Scan"
-description: "Scan a repo for AI, agent, and MCP security issues (OWASP LLM Top 10, Agentic, DSGAI, AISVS, MCP). Zero-config, SARIF-ready, fails the build on your chosen severity."
+description: "Scan code for AI, agent & MCP security risks (OWASP LLM Top 10, Agentic, AISVS, MCP). SARIF + CI gating."
 author: "dibakshya01"
 
 branding:
