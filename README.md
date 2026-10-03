@@ -7,6 +7,7 @@
 </p>
 
 <p align="center">
+  <a href="https://github.com/marketplace/actions/grey-panda-ai-security-scan"><img alt="GitHub Marketplace" src="https://img.shields.io/badge/Marketplace-Grey%20Panda-1c222a?style=for-the-badge&labelColor=1c222a&color=12b886&logo=github&logoColor=white"></a>
   <a href="LICENSE"><img alt="License: Apache-2.0" src="https://img.shields.io/badge/License-Apache%202.0-1c222a?style=for-the-badge&labelColor=1c222a&color=12b886"></a>
   <a href="pyproject.toml"><img alt="Python 3.9+" src="https://img.shields.io/badge/python-3.9%2B-1c222a?style=for-the-badge&labelColor=1c222a&color=3f4753"></a>
   <a href="pyproject.toml"><img alt="Zero runtime dependencies" src="https://img.shields.io/badge/runtime%20deps-0-1c222a?style=for-the-badge&labelColor=1c222a&color=12b886"></a>
