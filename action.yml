@@ -1,0 +1,76 @@
+name: "Grey Panda AI Security Scan"
+description: "Scan a repo for AI, agent, and MCP security issues (OWASP LLM Top 10, Agentic, DSGAI, AISVS, MCP). Zero-config, SARIF-ready, fails the build on your chosen severity."
+author: "dibakshya01"
+
+branding:
+  icon: "shield"
+  color: "green"
+
+inputs:
+  path:
+    description: "File or directory to scan."
+    required: false
+    default: "."
+  profile:
+    description: "Rule profile: solo | team | enterprise."
+    required: false
+    default: "team"
+  fail-on:
+    description: "Fail the job if any finding is at this severity or above: CRITICAL | HIGH | MEDIUM | LOW."
+    required: false
+    default: "HIGH"
+  format:
+    description: "Report format: markdown | json | sarif."
+    required: false
+    default: "sarif"
+  output:
+    description: "Write the report to this file. Leave empty to print to stdout."
+    required: false
+    default: "grey-panda.sarif"
+  version:
+    description: "grey-panda version to install (e.g. 1.0.7). Leave empty for the latest release."
+    required: false
+    default: ""
+
+outputs:
+  report:
+    description: "Path to the generated report file (equals the 'output' input when set)."
+    value: ${{ inputs.output }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+
+    # Inputs are passed through the environment and referenced as quoted shell
+    # variables — never interpolated as ${{ }} straight into the script — so a
+    # crafted input value cannot break out into command injection. (This is the
+    # same rule Grey Panda's own rules enforce.)
+    - name: Install Grey Panda
+      shell: bash
+      env:
+        GP_VERSION: ${{ inputs.version }}
+      run: |
+        if [ -n "$GP_VERSION" ]; then
+          python -m pip install "grey-panda==$GP_VERSION"
+        else
+          python -m pip install grey-panda
+        fi
+
+    - name: Run Grey Panda scan
+      shell: bash
+      env:
+        GP_PATH: ${{ inputs.path }}
+        GP_PROFILE: ${{ inputs.profile }}
+        GP_FAIL_ON: ${{ inputs.fail-on }}
+        GP_FORMAT: ${{ inputs.format }}
+        GP_OUTPUT: ${{ inputs.output }}
+      run: |
+        args=(scan "$GP_PATH" --profile "$GP_PROFILE" --fail-on "$GP_FAIL_ON" --format "$GP_FORMAT")
+        if [ -n "$GP_OUTPUT" ]; then
+          args+=(--output "$GP_OUTPUT")
+        fi
+        gp "${args[@]}"

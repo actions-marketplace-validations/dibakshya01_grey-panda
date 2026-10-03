@@ -164,6 +164,22 @@ uvx grey-panda scan .            # zero-install run
 | `gp mcp` | Run Grey Panda as an MCP server (stdio) |
 | `gp doctor` | Environment self-check + honest-limits pointer |
 
+## 🚀 Use as a GitHub Action
+
+Grey Panda ships as a composite GitHub Action — drop it into any workflow to gate pull requests on AI/agent/MCP findings, with SARIF rendered inline in the PR diff:
+
+```yaml
+- uses: dibakshya01/grey-panda@v1
+  with:
+    path: .            # file or directory to scan
+    profile: team      # solo | team | enterprise
+    fail-on: HIGH      # CRITICAL | HIGH | MEDIUM | LOW
+    format: sarif      # markdown | json | sarif
+    output: grey-panda.sarif
+```
+
+Pair it with `github/codeql-action/upload-sarif@v3` to surface findings in **Security → Code scanning**. All inputs are optional; the defaults above are the recommended CI baseline.
+
 ## 🤝 In your IDE
 
 Grey Panda *secures* MCP — and ships **as** an MCP server, so Claude Code, Cursor, Windsurf, or VS Code can call it while you code. One command wires it into Claude Code:
